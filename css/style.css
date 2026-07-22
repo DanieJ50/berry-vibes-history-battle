@@ -1,5 +1,4 @@
 
-
 :root {
   --purple: #7836e8;
   --purple-dark: #4d1b9e;
@@ -485,11 +484,10 @@ footer button {
   background: var(--purple);
 }
 
-
 .flashcard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+  gap: 18px;
   align-items: stretch;
 }
 
@@ -497,7 +495,7 @@ footer button {
   display: block;
   width: 100%;
   min-width: 0;
-  height: 370px;
+  height: 320px;
   padding: 0;
   border: 0;
   color: inherit;
@@ -531,11 +529,13 @@ footer button {
   display: flex;
   width: 100%;
   height: 100%;
-  min-width: 0;
   flex-direction: column;
-  padding: 24px;
+  justify-content: center;
+  padding: 22px;
+  overflow: auto;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
   border: 3px solid var(--purple-dark);
   border-radius: 24px;
   box-shadow: var(--shadow);
@@ -543,138 +543,53 @@ footer button {
 
 .flashcard-front {
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
   text-align: center;
   background: linear-gradient(145deg, #fff, #ffe0eb);
 }
 
 .flashcard-back {
-  justify-content: flex-start;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-  touch-action: pan-y;
   transform: rotateY(180deg) translateZ(1px);
   background: linear-gradient(145deg, #fffceb, #eee5ff);
 }
 
 .flashcard-category {
-  display: block;
-  max-width: 100%;
   color: var(--berry-dark);
-  font-size: .74rem;
+  font-size: .78rem;
   font-weight: 900;
-  letter-spacing: .07em;
-  line-height: 1.35;
-  text-align: center;
+  letter-spacing: .08em;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
 }
 
 .flashcard-front h2 {
-  max-width: 100%;
   margin: 18px 0 10px;
-  font-size: clamp(1.65rem, 3vw, 2.45rem);
-  line-height: 1.02;
-  overflow-wrap: anywhere;
-  word-break: normal;
-  hyphens: auto;
 }
 
 .flashcard-date {
-  max-width: 100%;
   color: var(--muted);
-  font-size: .9rem;
   font-weight: 900;
-  line-height: 1.35;
-  overflow-wrap: anywhere;
 }
 
 .flip-hint {
-  margin-top: 20px;
+  margin-top: 18px;
   color: var(--purple-dark);
-  font-size: .86rem;
+  font-size: .85rem;
   font-weight: 900;
 }
 
-.flashcard-back h3 {
-  margin: 8px 0 10px;
-  font-size: 1.3rem;
-  line-height: 1.15;
-  overflow-wrap: anywhere;
-}
-
 .flashcard-back p {
-  margin-bottom: 12px;
-  font-size: .96rem;
-  line-height: 1.48;
-  overflow-wrap: anywhere;
+  line-height: 1.55;
 }
 
 .memory-hook {
-  padding: 11px;
+  padding: 10px;
   border-radius: 12px;
   background: rgba(255,216,101,.34);
 }
 
 .mastered-label {
-  display: block;
-  margin-top: 4px;
-  padding-bottom: 6px;
+  margin-top: auto;
   color: var(--green);
   font-weight: 900;
-}
-
-.flip-back-button {
-  position: sticky;
-  bottom: -1px;
-  width: 100%;
-  margin-top: auto;
-  padding: 10px 12px;
-  border: 2px solid var(--purple);
-  border-radius: 999px;
-  color: var(--purple-dark);
-  background: rgba(255, 255, 255, .96);
-  font-weight: 900;
-}
-
-.flip-back-button:hover,
-.flip-back-button:focus-visible {
-  background: #f2eaff;
-}
-
-@media (max-width: 720px) {
-  .flashcard-grid {
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  }
-
-  .flashcard {
-    height: 390px;
-  }
-}
-
-@media (max-width: 560px) {
-  .flashcard-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .flashcard {
-    height: 420px;
-  }
-
-  .flashcard-face {
-    padding: 21px;
-  }
-
-  .flashcard-front h2 {
-    font-size: clamp(1.8rem, 9vw, 2.6rem);
-  }
-
-  .flashcard-back p {
-    font-size: 1rem;
-  }
 }
 
 .battle-arena {
@@ -1245,5 +1160,179 @@ footer button {
 
   .flashcard {
     height: 350px;
+  }
+}
+
+
+/* ================================================================
+   FINAL STUDY DECK FIX
+   - Every card has the same dynamically calculated height.
+   - No card has its own scrollbar.
+   - Long terms wrap instead of overflowing.
+   - Every matching type of text uses the same font size.
+   ================================================================ */
+
+.flashcard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+.flashcard {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 400px;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  perspective: 1200px;
+  background: transparent;
+}
+
+.flashcard-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transition: transform .55s ease;
+}
+
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px;
+  overflow: hidden;
+  color: var(--ink);
+  font-family: "Nunito", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border: 3px solid var(--purple-dark);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+.flashcard-front {
+  align-items: center;
+  text-align: center;
+  transform: rotateY(0deg) translateZ(1px);
+  background: linear-gradient(145deg, #ffffff, #ffe0eb);
+}
+
+.flashcard-back {
+  justify-content: flex-start;
+  text-align: left;
+  transform: rotateY(180deg) translateZ(1px);
+  background: linear-gradient(145deg, #fffceb, #eee5ff);
+}
+
+.flashcard-category {
+  width: 100%;
+  color: var(--berry-dark);
+  font-family: "Nunito", sans-serif;
+  font-size: .78rem;
+  font-weight: 900;
+  line-height: 1.3;
+  letter-spacing: .07em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.flashcard-front h2,
+.flashcard-back h3 {
+  width: 100%;
+  margin: 14px 0 10px;
+  color: var(--purple-dark);
+  font-family: "Nunito", sans-serif;
+  font-size: 1.55rem;
+  font-weight: 900;
+  line-height: 1.12;
+  text-align: center;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.flashcard-date,
+.flip-hint,
+.mastered-label {
+  font-family: "Nunito", sans-serif;
+  font-size: .82rem;
+  font-weight: 900;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.flashcard-date {
+  color: var(--muted);
+}
+
+.flip-hint {
+  margin-top: 18px;
+  color: var(--purple-dark);
+}
+
+.flashcard-back p {
+  width: 100%;
+  margin: 0 0 12px;
+  font-family: "Nunito", sans-serif;
+  font-size: .96rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.memory-hook {
+  width: 100%;
+  padding: 11px;
+  border-radius: 12px;
+  background: rgba(255, 216, 101, .34);
+  font-size: .92rem !important;
+  line-height: 1.42 !important;
+}
+
+.mastered-label {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 8px;
+  color: var(--green);
+}
+
+@media (max-width: 980px) {
+  .flashcard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .flashcard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .flashcard {
+    height: 390px;
   }
 }
