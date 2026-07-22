@@ -240,6 +240,106 @@ let masteredTerms = new Set(
 
 let bestScore = Number(localStorage.getItem("berryHistoryBestExam") || 0);
 
+const defaultProfile = {
+  name: "History Hero",
+  icon: "🍓",
+  bio: "Ready to master every HIST 1301 key term.",
+  photo: "",
+  theme: "berry"
+};
+
+const defaultStudyStats = {
+  flippedTerms: [],
+  battlesCompleted: 0,
+  battlesWon: 0,
+  puzzlesCompleted: 0,
+  examsCompleted: 0
+};
+
+const badgeDefinitions = [
+  {
+    id: "deck-explorer",
+    icon: "📚",
+    name: "Deck Explorer",
+    task: "Flip 10 different Study Deck cards."
+  },
+  {
+    id: "deck-scholar",
+    icon: "🗂️",
+    name: "Deck Scholar",
+    task: "Flip all 30 Study Deck cards."
+  },
+  {
+    id: "battle-finisher",
+    icon: "⚔️",
+    name: "Battle Finisher",
+    task: "Complete one 12-question Berry Battle."
+  },
+  {
+    id: "beast-defeater",
+    icon: "👾",
+    name: "Beast Defeater",
+    task: "Win a Berry Battle with at least 8 correct answers and a heart remaining."
+  },
+  {
+    id: "puzzle-solver",
+    icon: "🧩",
+    name: "Puzzle Solver",
+    task: "Complete one six-term matching puzzle."
+  },
+  {
+    id: "exam-finisher",
+    icon: "⏱️",
+    name: "Exam Finisher",
+    task: "Complete one 25-question practice exam."
+  },
+  {
+    id: "exam-ace",
+    icon: "🏆",
+    name: "Exam Ace",
+    task: "Score at least 20 out of 25 on a practice exam."
+  },
+  {
+    id: "master-historian",
+    icon: "👑",
+    name: "Master Historian",
+    task: "Master all 30 key terms."
+  }
+];
+
+function readLocalJson(key, fallback) {
+  try {
+    const rawValue = localStorage.getItem(key);
+
+    return rawValue
+      ? JSON.parse(rawValue)
+      : fallback;
+  } catch (error) {
+    console.warn(`Could not read ${key}.`, error);
+    return fallback;
+  }
+}
+
+let userProfile = {
+  ...defaultProfile,
+  ...readLocalJson("berryHistoryProfile", {})
+};
+
+let studyStats = {
+  ...defaultStudyStats,
+  ...readLocalJson("berryHistoryStats", {})
+};
+
+studyStats.flippedTerms = Array.isArray(studyStats.flippedTerms)
+  ? [...new Set(studyStats.flippedTerms)]
+  : [];
+
+let earnedBadges = readLocalJson("berryHistoryBadges", {});
+
+let badgeToastQueue = [];
+let badgeToastActive = false;
+let pendingProfilePhoto = userProfile.photo;
+
 function shuffle(items) {
   const copy = [...items];
 
@@ -271,6 +371,12 @@ function markMastered(termName) {
   masteredTerms.add(termName);
   saveProgress();
   updateDashboard();
+
+  if (masteredTerms.size >= 30) {
+    awardBadge("master-historian");
+  }
+
+  renderProfilePage();
 }
 
 function updateDashboard() {
@@ -323,6 +429,7 @@ function showView(name) {
 
   if (name === "study") renderStudyDeck();
   if (name === "match" && !matchTerms.length) startMatchPuzzle();
+  if (name === "profile") renderProfilePage();
 }
 
 navButtons.forEach((button) => {
@@ -555,7 +662,12 @@ function renderStudyDeck() {
     `;
 
     card.addEventListener("click", () => {
+      const revealingBack = !card.classList.contains("flipped");
       card.classList.toggle("flipped");
+
+      if (revealingBack) {
+        recordStudyCardFlip(item.term);
+      }
     });
 
     flashcardGrid.appendChild(card);
@@ -720,7 +832,17 @@ function finishBattle() {
     battleScore >= 8 &&
     battleLives > 0;
 
-  if (won) celebrate();
+  studyStats.battlesCompleted += 1;
+  awardBadge("battle-finisher");
+
+  if (won) {
+    studyStats.battlesWon += 1;
+    awardBadge("beast-defeater");
+    celebrate();
+  }
+
+  saveStudyStats();
+  renderProfilePage();
 
   battleResults.innerHTML = `
     <span class="results-score">${battleScore} / 12</span>
@@ -895,6 +1017,13 @@ function tryMatch(termName, definitionElement) {
     matchMessage.textContent =
       `${termName} matched correctly!`;
 
+    if (matchedNames.size === 6) {
+      studyStats.puzzlesCompleted += 1;
+      saveStudyStats();
+      awardBadge("puzzle-solver");
+      renderProfilePage();
+    }
+
     renderMatchPuzzle();
     return;
   }
@@ -942,6 +1071,7 @@ let examAnswers = [];
 let examSelected = null;
 let examTimeLeft = 1800;
 let examTimerId = null;
+let examSubmitted = false;
 
 function startExam() {
   window.clearInterval(examTimerId);
@@ -951,6 +1081,7 @@ function startExam() {
   examAnswers = [];
   examSelected = null;
   examTimeLeft = 1800;
+  examSubmitted = false;
 
   examIntro.hidden = true;
   examResults.hidden = true;
@@ -1059,6 +1190,9 @@ function saveExamAnswer() {
 }
 
 function finishExam(timeExpired) {
+  if (examSubmitted) return;
+  examSubmitted = true;
+
   window.clearInterval(examTimerId);
   examTimerId = null;
 
@@ -1076,6 +1210,16 @@ function finishExam(timeExpired) {
 
   const score =
     examAnswers.filter((answer) => answer.correct).length;
+
+  studyStats.examsCompleted += 1;
+  saveStudyStats();
+  awardBadge("exam-finisher");
+
+  if (score >= 20) {
+    awardBadge("exam-ace");
+  }
+
+  renderProfilePage();
 
   if (score > bestScore) {
     bestScore = score;
@@ -1142,6 +1286,546 @@ function finishExam(timeExpired) {
 startExamButton.addEventListener("click", startExam);
 examNext.addEventListener("click", saveExamAnswer);
 
+
+/* ---------------- PROFILE + BADGES ---------------- */
+
+const profileForm = document.querySelector("#profile-form");
+const profileNameInput = document.querySelector("#profile-name-input");
+const profileBioInput = document.querySelector("#profile-bio-input");
+const bioCharacterCount = document.querySelector("#bio-character-count");
+const profilePhotoInput = document.querySelector("#profile-photo-input");
+const removeProfilePhotoButton =
+  document.querySelector("#remove-profile-photo");
+const resetProfileButton = document.querySelector("#reset-profile");
+const profileSaveState = document.querySelector("#profile-save-state");
+
+const navProfilePhoto = document.querySelector("#nav-profile-photo");
+const navProfileIcon = document.querySelector("#nav-profile-icon");
+const navProfileName = document.querySelector("#nav-profile-name");
+
+const profilePhotoPreview =
+  document.querySelector("#profile-photo-preview");
+const profileIconPreview =
+  document.querySelector("#profile-icon-preview");
+const profileNamePreview =
+  document.querySelector("#profile-name-preview");
+const profileBioPreview =
+  document.querySelector("#profile-bio-preview");
+const profileRibbonIcon =
+  document.querySelector("#profile-ribbon-icon");
+
+const profileMasteredStat =
+  document.querySelector("#profile-mastered-stat");
+const profileExamStat =
+  document.querySelector("#profile-exam-stat");
+const profileCardStat =
+  document.querySelector("#profile-card-stat");
+const profileBadgeStat =
+  document.querySelector("#profile-badge-stat");
+const profileMasteryPercent =
+  document.querySelector("#profile-mastery-percent");
+const profileBadgePercent =
+  document.querySelector("#profile-badge-percent");
+const profileMasteryFill =
+  document.querySelector("#profile-mastery-fill");
+const profileBadgeFill =
+  document.querySelector("#profile-badge-fill");
+const badgeGrid = document.querySelector("#badge-grid");
+
+const badgeToast = document.querySelector("#badge-toast");
+const badgeToastIcon = document.querySelector("#badge-toast-icon");
+const badgeToastName = document.querySelector("#badge-toast-name");
+
+function saveStudyStats() {
+  try {
+    localStorage.setItem(
+      "berryHistoryStats",
+      JSON.stringify(studyStats)
+    );
+  } catch (error) {
+    console.warn("Could not save study task statistics.", error);
+  }
+}
+
+function saveBadgeState() {
+  try {
+    localStorage.setItem(
+      "berryHistoryBadges",
+      JSON.stringify(earnedBadges)
+    );
+  } catch (error) {
+    console.warn("Could not save badges.", error);
+  }
+}
+
+function saveProfileState() {
+  try {
+    localStorage.setItem(
+      "berryHistoryProfile",
+      JSON.stringify(userProfile)
+    );
+
+    profileSaveState.textContent =
+      "Profile saved successfully!";
+    profileSaveState.className = "save-state saved";
+  } catch (error) {
+    console.error("Could not save profile.", error);
+
+    profileSaveState.textContent =
+      "The profile could not be saved. Try a smaller picture.";
+    profileSaveState.className = "save-state error";
+  }
+}
+
+function getBadgeDefinition(badgeId) {
+  return badgeDefinitions.find((badge) => badge.id === badgeId);
+}
+
+function awardBadge(badgeId, options = {}) {
+  const badge = getBadgeDefinition(badgeId);
+
+  if (!badge || earnedBadges[badgeId]) return false;
+
+  earnedBadges[badgeId] = new Date().toISOString();
+  saveBadgeState();
+  renderProfilePage();
+
+  if (!options.silent) {
+    badgeToastQueue.push(badge);
+    processBadgeToastQueue();
+    celebrate(16);
+  }
+
+  return true;
+}
+
+function processBadgeToastQueue() {
+  if (badgeToastActive || !badgeToastQueue.length) return;
+
+  badgeToastActive = true;
+  const badge = badgeToastQueue.shift();
+
+  badgeToastIcon.textContent = badge.icon;
+  badgeToastName.textContent = badge.name;
+  badgeToast.hidden = false;
+
+  window.setTimeout(() => {
+    badgeToast.hidden = true;
+    badgeToastActive = false;
+    processBadgeToastQueue();
+  }, 3400);
+}
+
+function recordStudyCardFlip(termName) {
+  if (!studyStats.flippedTerms.includes(termName)) {
+    studyStats.flippedTerms.push(termName);
+    saveStudyStats();
+
+    if (studyStats.flippedTerms.length >= 10) {
+      awardBadge("deck-explorer");
+    }
+
+    if (studyStats.flippedTerms.length >= 30) {
+      awardBadge("deck-scholar");
+    }
+
+    renderProfilePage();
+  }
+}
+
+function reconcileCompletedTasks() {
+  if (studyStats.flippedTerms.length >= 10) {
+    awardBadge("deck-explorer", { silent: true });
+  }
+
+  if (studyStats.flippedTerms.length >= 30) {
+    awardBadge("deck-scholar", { silent: true });
+  }
+
+  if (studyStats.battlesCompleted >= 1) {
+    awardBadge("battle-finisher", { silent: true });
+  }
+
+  if (studyStats.battlesWon >= 1) {
+    awardBadge("beast-defeater", { silent: true });
+  }
+
+  if (studyStats.puzzlesCompleted >= 1) {
+    awardBadge("puzzle-solver", { silent: true });
+  }
+
+  if (studyStats.examsCompleted >= 1 || bestScore > 0) {
+    awardBadge("exam-finisher", { silent: true });
+  }
+
+  if (bestScore >= 20) {
+    awardBadge("exam-ace", { silent: true });
+  }
+
+  if (masteredTerms.size >= 30) {
+    awardBadge("master-historian", { silent: true });
+  }
+}
+
+function applyProfileTheme() {
+  const validThemes = [
+    "berry",
+    "lavender",
+    "sunshine",
+    "mint",
+    "blueberry"
+  ];
+
+  if (!validThemes.includes(userProfile.theme)) {
+    userProfile.theme = "berry";
+  }
+
+  document.body.dataset.profileTheme = userProfile.theme;
+}
+
+function setAvatarDisplay(photoElement, iconElement, photoValue, iconValue) {
+  const hasPhoto = Boolean(photoValue);
+
+  photoElement.hidden = !hasPhoto;
+  iconElement.hidden = hasPhoto;
+
+  if (hasPhoto) {
+    photoElement.src = photoValue;
+  } else {
+    photoElement.removeAttribute("src");
+    iconElement.textContent = iconValue;
+  }
+}
+
+function updateProfilePreviewFromInputs() {
+  const draftName =
+    profileNameInput.value.trim() ||
+    "History Hero";
+
+  const draftBio =
+    profileBioInput.value.trim() ||
+    "Ready to master every HIST 1301 key term.";
+
+  profileNamePreview.textContent = draftName;
+  profileBioPreview.textContent = draftBio;
+  bioCharacterCount.textContent =
+    String(profileBioInput.value.length);
+}
+
+function renderProfilePage() {
+  applyProfileTheme();
+
+  profileNameInput.value = userProfile.name;
+  profileBioInput.value = userProfile.bio;
+  bioCharacterCount.textContent =
+    String(userProfile.bio.length);
+
+  profileNamePreview.textContent =
+    userProfile.name || "History Hero";
+
+  profileBioPreview.textContent =
+    userProfile.bio ||
+    "Ready to master every HIST 1301 key term.";
+
+  profileRibbonIcon.textContent = userProfile.icon;
+  navProfileName.textContent = userProfile.name || "Profile";
+
+  setAvatarDisplay(
+    profilePhotoPreview,
+    profileIconPreview,
+    pendingProfilePhoto,
+    userProfile.icon
+  );
+
+  setAvatarDisplay(
+    navProfilePhoto,
+    navProfileIcon,
+    userProfile.photo,
+    userProfile.icon
+  );
+
+  document
+    .querySelectorAll("[data-profile-icon]")
+    .forEach((button) => {
+      button.classList.toggle(
+        "selected",
+        button.dataset.profileIcon === userProfile.icon
+      );
+    });
+
+  document
+    .querySelectorAll("[data-profile-theme]")
+    .forEach((button) => {
+      button.classList.toggle(
+        "selected",
+        button.dataset.profileTheme === userProfile.theme
+      );
+    });
+
+  removeProfilePhotoButton.disabled = !pendingProfilePhoto;
+
+  const masteredAmount = masteredTerms.size;
+  const flippedAmount = studyStats.flippedTerms.length;
+  const earnedAmount = Object.keys(earnedBadges).length;
+  const masteryPercentage =
+    Math.round((masteredAmount / historyTerms.length) * 100);
+  const badgePercentage =
+    Math.round((earnedAmount / badgeDefinitions.length) * 100);
+
+  profileMasteredStat.textContent =
+    `${masteredAmount} / ${historyTerms.length}`;
+
+  profileExamStat.textContent =
+    bestScore > 0
+      ? `${bestScore} / 25`
+      : "No attempt";
+
+  profileCardStat.textContent =
+    `${flippedAmount} / ${historyTerms.length}`;
+
+  profileBadgeStat.textContent =
+    `${earnedAmount} / ${badgeDefinitions.length}`;
+
+  profileMasteryPercent.textContent =
+    `${masteryPercentage}%`;
+
+  profileBadgePercent.textContent =
+    `${badgePercentage}%`;
+
+  profileMasteryFill.style.width =
+    `${masteryPercentage}%`;
+
+  profileBadgeFill.style.width =
+    `${badgePercentage}%`;
+
+  renderBadgeGrid();
+}
+
+function renderBadgeGrid() {
+  badgeGrid.innerHTML = "";
+
+  badgeDefinitions.forEach((badge) => {
+    const earnedDate = earnedBadges[badge.id];
+    const card = document.createElement("article");
+
+    card.className = "badge-card";
+    card.classList.toggle("earned", Boolean(earnedDate));
+
+    const formattedDate = earnedDate
+      ? new Date(earnedDate).toLocaleDateString()
+      : "";
+
+    card.innerHTML = `
+      <span class="badge-card-icon" aria-hidden="true">${badge.icon}</span>
+      <h3>${badge.name}</h3>
+      <p>${badge.task}</p>
+      <span class="badge-state">
+        ${earnedDate ? "Earned" : "Locked"}
+      </span>
+      ${
+        earnedDate
+          ? `<span class="badge-earned-date">Earned ${formattedDate}</span>`
+          : ""
+      }
+    `;
+
+    badgeGrid.appendChild(card);
+  });
+}
+
+function resizeProfileImage(file) {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith("image/")) {
+      reject(new Error("Please choose an image file."));
+      return;
+    }
+
+    if (file.size > 7 * 1024 * 1024) {
+      reject(new Error("Please choose an image smaller than 7 MB."));
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onerror = () => {
+      reject(new Error("The picture could not be read."));
+    };
+
+    reader.onload = () => {
+      const image = new Image();
+
+      image.onerror = () => {
+        reject(new Error("The picture could not be opened."));
+      };
+
+      image.onload = () => {
+        const size = 360;
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        canvas.width = size;
+        canvas.height = size;
+
+        const cropSize = Math.min(
+          image.naturalWidth,
+          image.naturalHeight
+        );
+
+        const sourceX =
+          (image.naturalWidth - cropSize) / 2;
+
+        const sourceY =
+          (image.naturalHeight - cropSize) / 2;
+
+        context.drawImage(
+          image,
+          sourceX,
+          sourceY,
+          cropSize,
+          cropSize,
+          0,
+          0,
+          size,
+          size
+        );
+
+        resolve(canvas.toDataURL("image/jpeg", .82));
+      };
+
+      image.src = reader.result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+profileNameInput.addEventListener(
+  "input",
+  updateProfilePreviewFromInputs
+);
+
+profileBioInput.addEventListener(
+  "input",
+  updateProfilePreviewFromInputs
+);
+
+document
+  .querySelectorAll("[data-profile-icon]")
+  .forEach((button) => {
+    button.addEventListener("click", () => {
+      userProfile.icon = button.dataset.profileIcon;
+      profileIconPreview.textContent = userProfile.icon;
+      profileRibbonIcon.textContent = userProfile.icon;
+
+      document
+        .querySelectorAll("[data-profile-icon]")
+        .forEach((iconButton) => {
+          iconButton.classList.toggle(
+            "selected",
+            iconButton === button
+          );
+        });
+    });
+  });
+
+document
+  .querySelectorAll("[data-profile-theme]")
+  .forEach((button) => {
+    button.addEventListener("click", () => {
+      userProfile.theme = button.dataset.profileTheme;
+      applyProfileTheme();
+
+      document
+        .querySelectorAll("[data-profile-theme]")
+        .forEach((themeButton) => {
+          themeButton.classList.toggle(
+            "selected",
+            themeButton === button
+          );
+        });
+
+      profileSaveState.textContent =
+        "Background previewed. Save Profile to keep it.";
+      profileSaveState.className = "save-state";
+    });
+  });
+
+profilePhotoInput.addEventListener("change", async () => {
+  const [file] = profilePhotoInput.files;
+
+  if (!file) return;
+
+  profileSaveState.textContent =
+    "Preparing profile picture…";
+  profileSaveState.className = "save-state";
+
+  try {
+    pendingProfilePhoto =
+      await resizeProfileImage(file);
+
+    setAvatarDisplay(
+      profilePhotoPreview,
+      profileIconPreview,
+      pendingProfilePhoto,
+      userProfile.icon
+    );
+
+    removeProfilePhotoButton.disabled = false;
+
+    profileSaveState.textContent =
+      "Picture ready. Save Profile to keep it.";
+  } catch (error) {
+    profileSaveState.textContent = error.message;
+    profileSaveState.className = "save-state error";
+  } finally {
+    profilePhotoInput.value = "";
+  }
+});
+
+removeProfilePhotoButton.addEventListener("click", () => {
+  pendingProfilePhoto = "";
+
+  setAvatarDisplay(
+    profilePhotoPreview,
+    profileIconPreview,
+    pendingProfilePhoto,
+    userProfile.icon
+  );
+
+  removeProfilePhotoButton.disabled = true;
+  profileSaveState.textContent =
+    "Picture removed. Save Profile to keep the change.";
+  profileSaveState.className = "save-state";
+});
+
+profileForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  userProfile.name =
+    profileNameInput.value.trim() ||
+    defaultProfile.name;
+
+  userProfile.bio =
+    profileBioInput.value.trim() ||
+    defaultProfile.bio;
+
+  userProfile.photo = pendingProfilePhoto;
+  saveProfileState();
+  renderProfilePage();
+});
+
+resetProfileButton.addEventListener("click", () => {
+  userProfile = { ...defaultProfile };
+  pendingProfilePhoto = "";
+  saveProfileState();
+  renderProfilePage();
+
+  profileSaveState.textContent =
+    "Profile reset to the Berry Vibes defaults.";
+  profileSaveState.className = "save-state saved";
+});
+
+
 /* ---------------- SOURCES ---------------- */
 
 const sourcesDialog = document.querySelector("#sources-dialog");
@@ -1173,6 +1857,8 @@ sourcesDialog.addEventListener("click", (event) => {
 renderStudyFilters();
 renderStudyDeck();
 updateDashboard();
+reconcileCompletedTasks();
+renderProfilePage();
 
 window.addEventListener("resize", scheduleStudyCardFit);
 
