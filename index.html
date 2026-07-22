@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Berry Vibes Studio-inspired HIST 1301 study battle game.">
+  <title>Berry Vibes History Battle</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top"><span>🍓</span><b>Berry Vibes Studio</b><small>History Battle</small></a>
+    <button id="soundBtn" class="ghost" type="button" aria-pressed="true">🔊 Sound On</button>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="hero panel">
+      <div>
+        <p class="eyebrow">HIST 1301 • EXAM 1 STUDY QUEST</p>
+        <h1>Berry Vibes History Battle</h1>
+        <p class="lead">Defeat the History Gremlin with multiple-choice battles, boss terms, study streaks, explanations, and a draggable timeline puzzle.</p>
+        <div class="tags"><span>⚔️ Battle Quiz</span><span>⏱️ Exam Mode</span><span>👑 Boss Rush</span><span>🧩 Puzzle</span></div>
+      </div>
+      <aside class="mascot"><div>🍓</div><b>BerryBelle</b><p>Your tiny but academically dangerous study champion.</p></aside>
+    </section>
+
+    <section class="stats" aria-label="Game statistics">
+      <article><span>Score</span><b id="score">0</b></article>
+      <article><span>Streak</span><b id="streak">0 🔥</b></article>
+      <article><span>Question</span><b id="questionCount">0/0</b></article>
+      <article><span>Best Score</span><b id="bestScore">0</b></article>
+    </section>
+
+    <section id="menu" class="panel screen">
+      <div class="heading"><div><p class="eyebrow">CHOOSE YOUR QUEST</p><h2>Pick a battle mode</h2></div><span class="pill">30 key terms</span></div>
+      <div class="modes">
+        <button data-mode="warmup"><span>🍓</span><b>Warm-Up Battle</b><small>10 random questions • untimed</small></button>
+        <button data-mode="exam"><span>⏱️</span><b>Exam Simulation</b><small>25 questions • 30 minutes</small></button>
+        <button data-mode="full"><span>📚</span><b>Full Berry Quest</b><small>All 30 terms • untimed</small></button>
+        <button data-mode="boss"><span>👑</span><b>Boss Rush</b><small>Four bold key terms</small></button>
+      </div>
+      <button id="openPuzzle" class="secondary wide" type="button">🧩 Open Timeline Berry Quilt</button>
+      <p class="note">Based on the supplied Exam 1 key-term sheet. Professor Schulze’s lecture wording takes priority.</p>
+    </section>
+
+    <section id="game" class="hidden">
+      <div class="battle panel">
+        <div><div class="fighter"><b>🧁 BerryBelle</b><span id="heroLabel">3 shields</span></div><div class="bar"><i id="heroBar"></i></div></div>
+        <div class="vs">⚔️</div>
+        <div><div class="fighter"><b>📜 History Gremlin</b><span id="enemyLabel">Ready</span></div><div class="bar enemy"><i id="enemyBar"></i></div></div>
+      </div>
+      <div class="panel question-panel">
+        <div class="toolbar"><span id="category" class="pill">Category</span><div><span id="timer" class="timer hidden">30:00</span><button id="burst" class="ghost" type="button" disabled>✨ Berry Burst</button></div></div>
+        <div class="progress"><i id="progress"></i></div>
+        <h2 id="prompt"></h2>
+        <div id="answers" class="answers"></div>
+        <div id="feedback" class="feedback hidden" role="status"></div>
+        <button id="next" class="primary wide hidden" type="button">Next Question ➜</button>
+      </div>
+    </section>
+
+    <section id="results" class="panel screen hidden">
+      <div class="result-head"><div>🏆</div><div><p class="eyebrow">BATTLE COMPLETE</p><h2 id="resultTitle"></h2><p id="resultStats"></p></div></div>
+      <div id="missedWrap"><h3>📌 Terms to review</h3><div id="missed" class="chips"></div></div>
+      <div class="actions"><button id="again" class="secondary" type="button">🔁 Another Battle</button><button id="resultPuzzle" class="primary" type="button">🧩 Timeline Puzzle</button></div>
+    </section>
+
+    <section id="puzzle" class="panel screen hidden">
+      <div class="heading"><div><p class="eyebrow">DRAGGABLE HISTORY PUZZLE</p><h2>Timeline Berry Quilt</h2><p>Arrange events from earliest to latest. Drag on desktop or use arrows on mobile.</p></div><button id="closePuzzle" class="secondary" type="button">Back</button></div>
+      <ol id="timeline"></ol>
+      <div id="puzzleFeedback" class="feedback">Arrange all ten tiles, then check your timeline.</div>
+      <div class="actions"><button id="shufflePuzzle" class="secondary" type="button">🔀 Shuffle</button><button id="hintPuzzle" class="secondary" type="button">💡 Hint</button><button id="checkPuzzle" class="primary" type="button">✅ Check</button></div>
+    </section>
+  </main>
+
+  <footer>Designed for Danielle’s HIST 1301 study quest • Berry Vibes Studio 🍓</footer>
+  <script src="script.js"></script>
+</body>
+</html>
