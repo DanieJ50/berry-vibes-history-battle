@@ -3,95 +3,415 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Berry Vibes History Battle, a playful HIST 1301 study game.">
-  <title>Berry Vibes History Battle</title>
+
+  <meta
+    name="description"
+    content="A playful Berry Vibes Studio history study battle, matching puzzle, flashcard deck, and 25-question exam simulator."
+  >
+
+  <title>Berry Vibes History Battle — HIST 1301 Exam 1</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chewy&family=Nunito:wght@500;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/script.js" defer></script>
 </head>
+
 <body>
-  <header class="topbar">
-    <a class="logo" href="#" data-home>🍓 <span>Berry Vibes Studio</span></a>
-    <div class="best">🏆 Best: <strong id="bestScore">0</strong></div>
+  <div class="background-berries" aria-hidden="true">
+    <span>🍓</span><span>📜</span><span>✨</span><span>🏛️</span>
+    <span>🫐</span><span>🗺️</span><span>🍒</span><span>⭐</span>
+  </div>
+
+  <header class="site-header">
+    <a class="brand" href="#home" data-view-link="home">
+      <img src="images/BerryBelle.jpg" alt="">
+      <span>
+        <strong>Berry Vibes History Battle</strong>
+        <small>HIST 1301 · Exam 1 Study App</small>
+      </span>
+    </a>
+
+    <button
+      class="menu-button"
+      id="menu-button"
+      type="button"
+      aria-expanded="false"
+      aria-controls="main-nav"
+    >
+      Menu ☰
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="Study modes">
+      <button type="button" data-view-link="home">Home</button>
+      <button type="button" data-view-link="study">Study Deck</button>
+      <button type="button" data-view-link="battle">Battle</button>
+      <button type="button" data-view-link="match">Match Puzzle</button>
+      <button type="button" data-view-link="exam">Exam Simulator</button>
+    </nav>
   </header>
 
-  <main class="shell">
-    <section id="homeScreen" class="screen active">
-      <div class="hero">
-        <div>
-          <p class="eyebrow">HIST 1301 STUDY ARCADE</p>
-          <h1>Berry Vibes<br>History Battle</h1>
-          <p class="lead">Battle the History Gremlin, master all thirty Exam 1 terms, and rebuild the timeline before test day.</p>
-          <div class="chips"><span>⚔️ Multiple Choice</span><span>🧩 Puzzle Mode</span><span>⏱️ Exam Timer</span></div>
+  <main>
+    <section class="view active" id="home-view" data-view="home">
+      <div class="hero panel">
+        <div class="hero-copy">
+          <p class="eyebrow">BerryBelle's History Training Ground</p>
+
+          <h1>Battle the past. Master all 30 key terms.</h1>
+
+          <p class="hero-text">
+            Study the professor's Exam 1 list through flashcards, multiple-choice
+            battles, matching puzzles, and a timed practice exam.
+          </p>
+
+          <div class="exam-format">
+            <span>📝 25 questions</span>
+            <span>⏱️ 30 minutes</span>
+            <span>🎯 One-sitting practice</span>
+          </div>
+
+          <div class="hero-actions">
+            <button
+              class="button button-primary"
+              type="button"
+              data-view-link="battle"
+            >
+              Start a history battle
+            </button>
+
+            <button
+              class="button button-secondary"
+              type="button"
+              data-view-link="exam"
+            >
+              Try the exam simulator
+            </button>
+          </div>
         </div>
-        <div class="mascot" aria-label="BerryBelle mascot">🍓<p><b>BerryBelle says:</b><br>Wrong answers are clues wearing tiny villain capes.</p></div>
+
+        <figure class="mascot-card">
+          <div class="mascot-ring" aria-hidden="true"></div>
+          <img
+            src="images/BerryBelle.jpg"
+            alt="BerryBelle, a pink strawberry milk carton mascot"
+          >
+          <figcaption>BerryBelle says: no panic, just practice 🍓</figcaption>
+        </figure>
       </div>
 
-      <div class="heading"><div><p class="eyebrow">CHOOSE YOUR QUEST</p><h2>Pick a study mode</h2></div><span>✨📚✨</span></div>
-      <div class="modes">
-        <button data-mode="warmup"><b>🍓 Warm-Up Battle</b><small>10 random questions • untimed</small></button>
-        <button data-mode="exam"><b>⏱️ Exam Simulator</b><small>25 questions • 30 minutes</small></button>
-        <button data-mode="full"><b>👑 Full Berry Quest</b><small>All 30 terms • untimed</small></button>
-        <button data-mode="boss"><b>⚔️ Bold-Term Boss Rush</b><small>Four highlighted terms</small></button>
-        <button id="timelineStart" class="wide"><b>🧩 Timeline Berry Quilt</b><small>Drag or move events from earliest to latest</small></button>
-      </div>
-      <div class="exam-strip"><span>📝 25 questions</span><span>⏳ 30 minutes</span><span>💻 One sitting</span><span>📚 Posted key terms</span></div>
+      <section class="mode-grid" aria-label="Available study modes">
+        <article class="mode-card panel">
+          <span class="mode-icon">📚</span>
+          <h2>Study Deck</h2>
+          <p>Search, filter, flip, and master every term from the key-term sheet.</p>
+          <button type="button" data-view-link="study">Open the deck</button>
+        </article>
+
+        <article class="mode-card panel">
+          <span class="mode-icon">⚔️</span>
+          <h2>Berry Battle</h2>
+          <p>Defeat the Forget-Me-Not Beast with correct multiple-choice answers.</p>
+          <button type="button" data-view-link="battle">Enter battle</button>
+        </article>
+
+        <article class="mode-card panel">
+          <span class="mode-icon">🧩</span>
+          <h2>Match Puzzle</h2>
+          <p>Drag or tap terms into their matching definitions.</p>
+          <button type="button" data-view-link="match">Build a puzzle</button>
+        </article>
+
+        <article class="mode-card panel">
+          <span class="mode-icon">⏳</span>
+          <h2>Exam Simulator</h2>
+          <p>Practice the real format: 25 questions with a 30-minute countdown.</p>
+          <button type="button" data-view-link="exam">Practice the exam</button>
+        </article>
+      </section>
+
+      <section class="dashboard panel">
+        <div>
+          <p class="section-label">Your progress</p>
+          <h2>History mastery garden</h2>
+          <p id="mastery-message">Master terms by answering correctly in any mode.</p>
+        </div>
+
+        <div class="mastery-display">
+          <span id="mastered-count">0</span>
+          <small>of 30 terms mastered</small>
+        </div>
+
+        <div class="mastery-track" aria-hidden="true">
+          <div id="mastery-fill"></div>
+        </div>
+
+        <p class="best-score">
+          Best exam score:
+          <strong id="best-exam-score">No attempt yet</strong>
+        </p>
+      </section>
+
+      <aside class="honor-note">
+        <strong>Study-aid note:</strong>
+        Use this before the Honorlock exam, not during it.
+      </aside>
     </section>
 
-    <section id="battleScreen" class="screen">
-      <div class="battlebar">
-        <button class="ghost" data-home>← Exit</button>
-        <div class="stats"><span>Score <b id="score">0</b></span><span>Streak <b id="streak">0 🔥</b></span><span>Question <b id="counter">1/10</b></span><span>Time <b id="timer">∞</b></span></div>
+    <section class="view" id="study-view" data-view="study" hidden>
+      <div class="section-hero panel">
+        <div>
+          <p class="eyebrow">Mode 1 · Learn the map</p>
+          <h1>Key-Term Study Deck</h1>
+          <p>Click any card to reveal the definition, date, and memory hook.</p>
+        </div>
+
+        <button class="button button-secondary" id="shuffle-study" type="button">
+          Shuffle cards
+        </button>
       </div>
 
-      <div class="fighters">
-        <div><b>🍓 BerryBelle</b><small>Study shields: <span id="shieldText">3/3</span></small><div class="bar"><i id="heroBar"></i></div></div>
-        <strong class="vs">VS</strong>
-        <div><b>📜 History Gremlin</b><small>Questions left: <span id="enemyText">10</span></small><div class="bar enemy"><i id="enemyBar"></i></div></div>
-      </div>
+      <section class="study-tools panel">
+        <label>
+          <span>Search the deck</span>
+          <input
+            id="study-search"
+            type="search"
+            placeholder="Try rebellion, religion, Boston…"
+          >
+        </label>
 
-      <div class="progress"><i id="progressBar"></i></div>
+        <div id="study-filters" class="filter-row"></div>
+      </section>
 
-      <article class="question-card">
-        <div class="question-top"><span id="category">Category</span><button id="burst" disabled>✨ Berry Burst<br><small>Remove two</small></button></div>
-        <h2 id="question">Question appears here</h2>
-        <div id="answers" class="answers"></div>
-        <div id="feedback" class="feedback" hidden></div>
-        <button id="next" class="primary" hidden>Next Question →</button>
-      </article>
+      <section
+        id="flashcard-grid"
+        class="flashcard-grid"
+        aria-label="History study flashcards"
+      ></section>
     </section>
 
-    <section id="resultsScreen" class="screen">
-      <article class="results">
-        <div id="resultEmoji" class="big-emoji">🏆</div>
-        <p class="eyebrow">BATTLE COMPLETE</p>
-        <h2 id="resultTitle">Berry Scholar Victory!</h2>
-        <p id="resultMessage"></p>
-        <div class="result-grid"><span>Score <b id="finalScore">0</b></span><span>Accuracy <b id="accuracy">0%</b></span><span>Best streak <b id="bestStreak">0</b></span></div>
-        <div id="reviewBox"><h3>📌 Terms to review</h3><div id="reviewTerms" class="chips"></div></div>
-        <blockquote>Empires may clash and timelines may twist,<br>but a term you review is a term you won't miss. 🍓</blockquote>
-        <div class="actions"><button class="ghost" data-home>Choose another mode</button><button id="retry" class="primary">Battle again</button></div>
-      </article>
+    <section class="view" id="battle-view" data-view="battle" hidden>
+      <div class="section-hero panel">
+        <div>
+          <p class="eyebrow">Mode 2 · Multiple-choice combat</p>
+          <h1>Berry Battle Arena</h1>
+          <p>Correct answers damage the Forget-Me-Not Beast. Three mistakes end the round.</p>
+        </div>
+
+        <button class="button button-primary" id="start-battle" type="button">
+          Start a new battle
+        </button>
+      </div>
+
+      <section class="battle-arena panel">
+        <div class="battle-hud">
+          <div class="hud-box">
+            <span>Player hearts</span>
+            <strong id="battle-hearts">❤️ ❤️ ❤️</strong>
+          </div>
+
+          <div class="enemy-card">
+            <div class="enemy-face" aria-hidden="true">👾</div>
+            <div>
+              <span>Forget-Me-Not Beast</span>
+              <div class="enemy-health">
+                <div id="enemy-health-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hud-box">
+            <span>Score / streak</span>
+            <strong>
+              <span id="battle-score">0</span>
+              · 🔥 <span id="battle-streak">0</span>
+            </strong>
+          </div>
+        </div>
+
+        <div id="battle-welcome" class="empty-state">
+          <span>⚔️🍓⚔️</span>
+          <h2>Ready when you are.</h2>
+          <p>Press “Start a new battle” to load 12 questions.</p>
+        </div>
+
+        <div id="battle-game" hidden>
+          <div class="question-progress">
+            <span id="battle-progress-text">Question 1 of 12</span>
+            <div class="mini-progress">
+              <div id="battle-progress-fill"></div>
+            </div>
+          </div>
+
+          <article class="question-card">
+            <p class="question-type" id="battle-question-type">Definition battle</p>
+            <h2 id="battle-question"></h2>
+            <div id="battle-options" class="option-grid"></div>
+            <p id="battle-feedback" class="feedback" role="status" aria-live="polite"></p>
+          </article>
+
+          <button
+            class="button button-primary next-button"
+            id="battle-next"
+            type="button"
+            hidden
+          >
+            Next battle question
+          </button>
+        </div>
+
+        <div id="battle-results" class="results-card" hidden></div>
+      </section>
     </section>
 
-    <section id="timelineScreen" class="screen">
-      <div class="heading"><div><p class="eyebrow">DRAGGABLE PUZZLE MODE</p><h2>Timeline Berry Quilt</h2><p>Drag on desktop or use the arrows on your phone.</p></div><button class="ghost" data-home>← Exit</button></div>
-      <div class="puzzle">
-        <ol id="timelineList"></ol>
-        <aside>
-          <h3>🫐 Correct positions</h3>
-          <strong id="puzzleScore">0 / 10</strong>
-          <p id="puzzleMessage">Arrange every tile, then check your quilt.</p>
-          <button id="checkTimeline" class="primary">✅ Check Timeline</button>
-          <button id="hintTimeline" class="ghost">💡 Place One Hint</button>
-          <button id="shuffleTimeline" class="ghost">🔀 Shuffle Again</button>
-        </aside>
+    <section class="view" id="match-view" data-view="match" hidden>
+      <div class="section-hero panel">
+        <div>
+          <p class="eyebrow">Mode 3 · Puzzle garden</p>
+          <h1>Term-to-Definition Match</h1>
+          <p>Drag a term onto its definition, or tap a term and then tap a definition.</p>
+        </div>
+
+        <button class="button button-primary" id="new-match-puzzle" type="button">
+          New six-term puzzle
+        </button>
       </div>
+
+      <section class="match-score panel">
+        <span id="match-score">0 of 6 matched</span>
+        <p id="match-message" role="status" aria-live="polite">
+          Choose a term to begin.
+        </p>
+      </section>
+
+      <section class="matching-board">
+        <div class="match-column panel">
+          <p class="section-label">Term tiles</p>
+          <h2>Pick up a term</h2>
+          <div id="match-terms" class="match-term-list"></div>
+        </div>
+
+        <div class="match-column panel">
+          <p class="section-label">Definition spaces</p>
+          <h2>Find its meaning</h2>
+          <div id="match-definitions" class="match-definition-list"></div>
+        </div>
+      </section>
+    </section>
+
+    <section class="view" id="exam-view" data-view="exam" hidden>
+      <div class="section-hero panel">
+        <div>
+          <p class="eyebrow">Mode 4 · Timed practice</p>
+          <h1>Exam 1 Simulator</h1>
+          <p>Twenty-five randomized multiple-choice questions. Thirty minutes. One practice sitting.</p>
+        </div>
+      </div>
+
+      <section id="exam-intro" class="exam-intro panel">
+        <div class="exam-warning">
+          <span>⏱️</span>
+          <div>
+            <h2>Practice the exact pace</h2>
+            <p>
+              You will have about 72 seconds per question. Once started, the timer keeps running
+              until you finish or time expires.
+            </p>
+          </div>
+        </div>
+
+        <ul>
+          <li>25 questions drawn from all 30 professor-listed terms</li>
+          <li>No hints during the practice exam</li>
+          <li>A review screen appears after submission</li>
+          <li>Your best score is stored in this browser</li>
+        </ul>
+
+        <button class="button button-primary" id="start-exam" type="button">
+          Begin 30-minute practice exam
+        </button>
+      </section>
+
+      <section id="exam-active" class="exam-active panel" hidden>
+        <div class="exam-topbar">
+          <div>
+            <span id="exam-question-number">Question 1 of 25</span>
+            <div class="mini-progress">
+              <div id="exam-progress-fill"></div>
+            </div>
+          </div>
+
+          <div class="timer" id="exam-timer" aria-live="polite">30:00</div>
+        </div>
+
+        <article class="question-card">
+          <p class="question-type" id="exam-question-type">Definition question</p>
+          <h2 id="exam-question"></h2>
+          <div id="exam-options" class="option-grid"></div>
+        </article>
+
+        <div class="exam-actions">
+          <p id="exam-selection-message">Select one answer.</p>
+          <button
+            class="button button-primary"
+            id="exam-next"
+            type="button"
+            disabled
+          >
+            Save answer and continue
+          </button>
+        </div>
+      </section>
+
+      <section id="exam-results" class="results-card panel" hidden></section>
     </section>
   </main>
 
-  <footer>Made for HIST 1301 by <b>Berry Vibes Studio</b> 🍓<br><small>Your professor's lecture wording is the final authority.</small></footer>
-  <script src="script.js"></script>
+  <dialog id="sources-dialog" class="sources-dialog">
+    <div class="dialog-heading">
+      <div>
+        <p class="section-label">Study-note references</p>
+        <h2>Sources used to check the summaries</h2>
+      </div>
+
+      <button
+        class="dialog-close"
+        id="close-sources"
+        type="button"
+        aria-label="Close sources"
+      >
+        ×
+      </button>
+    </div>
+
+    <p>
+      The professor's image supplied the term list. The short summaries were independently
+      written and checked against educational and public-history sources.
+    </p>
+
+    <ul>
+      <li><a href="https://openstax.org/books/us-history/pages/1-1-the-americas" target="_blank" rel="noopener noreferrer">OpenStax: The Americas</a></li>
+      <li><a href="https://openstax.org/books/us-history/pages/2-4-new-worlds-in-the-americas-labor-commerce-and-the-columbian-exchange" target="_blank" rel="noopener noreferrer">OpenStax: Labor, Commerce, and the Columbian Exchange</a></li>
+      <li><a href="https://openstax.org/books/us-history/pages/3-3-english-settlements-in-america" target="_blank" rel="noopener noreferrer">OpenStax: English Settlements in America</a></li>
+      <li><a href="https://openstax.org/books/us-history/pages/4-4-great-awakening-and-enlightenment" target="_blank" rel="noopener noreferrer">OpenStax: Great Awakening and Enlightenment</a></li>
+      <li><a href="https://openstax.org/books/us-history/pages/5-1-confronting-the-national-debt-the-aftermath-of-the-french-and-indian-war" target="_blank" rel="noopener noreferrer">OpenStax: Aftermath of the French and Indian War</a></li>
+      <li><a href="https://www.loc.gov/exhibitions/two-georges/about-this-exhibition/president-and-king/the-international-slave-trade/olaudah-equianos-petition-to-queen-charlotte/" target="_blank" rel="noopener noreferrer">Library of Congress: Olaudah Equiano</a></li>
+      <li><a href="https://www.nps.gov/articles/hohokam-culture.htm" target="_blank" rel="noopener noreferrer">National Park Service: Hohokam Culture</a></li>
+      <li><a href="https://global.si.edu/projects/caribbean-indigenous-legacies-project" target="_blank" rel="noopener noreferrer">Smithsonian: Caribbean Indigenous Legacies</a></li>
+    </ul>
+  </dialog>
+
+  <div class="celebration-layer" id="celebration-layer" aria-hidden="true"></div>
+
+  <footer>
+    <p>Designed for Danielle's HIST 1301 Exam 1 study · Berry Vibes Studio 🍓</p>
+    <button id="open-sources" type="button">View study-note sources</button>
+  </footer>
 </body>
 </html>
