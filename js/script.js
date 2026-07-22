@@ -428,6 +428,58 @@ const shuffleStudyButton = document.querySelector("#shuffle-study");
 
 let activeStudyFilter = "All";
 let studyOrder = [...historyTerms];
+let studyCardResizeTimer = null;
+
+
+function fitStudyCards() {
+  window.requestAnimationFrame(() => {
+    const cards = [...flashcardGrid.querySelectorAll(".flashcard")];
+
+    if (!cards.length) return;
+
+    /*
+      Start from the same baseline so every card is measured fairly.
+      scrollHeight still reports all of the content even though the
+      card faces use overflow: hidden.
+    */
+    cards.forEach((card) => {
+      card.style.height = "390px";
+    });
+
+    window.requestAnimationFrame(() => {
+      let requiredHeight = 390;
+
+      cards.forEach((card) => {
+        const faces = card.querySelectorAll(".flashcard-face");
+
+        faces.forEach((face) => {
+          requiredHeight = Math.max(
+            requiredHeight,
+            face.scrollHeight + 8
+          );
+        });
+      });
+
+      /*
+        Round upward for consistent rendering and add a little breathing room.
+      */
+      const finalHeight =
+        Math.ceil((requiredHeight + 12) / 10) * 10;
+
+      cards.forEach((card) => {
+        card.style.height = `${finalHeight}px`;
+      });
+    });
+  });
+}
+
+function scheduleStudyCardFit() {
+  window.clearTimeout(studyCardResizeTimer);
+
+  studyCardResizeTimer = window.setTimeout(() => {
+    fitStudyCards();
+  }, 120);
+}
 
 function renderStudyFilters() {
   const categories = ["All", ...unique(historyTerms.map((item) => item.category))];
@@ -472,29 +524,23 @@ function renderStudyDeck() {
   flashcardGrid.innerHTML = "";
 
   visible.forEach((item) => {
-    const card = document.createElement("article");
+    const card = document.createElement("button");
+    card.type = "button";
     card.className = "flashcard";
+    card.setAttribute("aria-label", `Flip flashcard for ${item.term}`);
 
     card.innerHTML = `
-      <div class="flashcard-inner">
-        <button
-          class="flashcard-face flashcard-front"
-          type="button"
-          aria-label="Reveal the study note for ${item.term}"
-        >
+      <span class="flashcard-inner">
+        <span class="flashcard-face flashcard-front">
           <span class="flashcard-category">
             ${categoryIcons[item.category] || "📚"} ${item.category}
           </span>
           <h2>${item.term}</h2>
           <span class="flashcard-date">${item.date}</span>
           <span class="flip-hint">Tap to reveal the study note</span>
-        </button>
+        </span>
 
-        <div
-          class="flashcard-face flashcard-back"
-          role="region"
-          aria-label="Study note for ${item.term}"
-        >
+        <span class="flashcard-face flashcard-back">
           <span class="flashcard-category">${item.date}</span>
           <h3>${item.term}</h3>
           <p>${item.summary}</p>
@@ -504,28 +550,12 @@ function renderStudyDeck() {
           <span class="mastered-label">
             ${masteredTerms.has(item.term) ? "✅ Mastered" : "Keep practicing"}
           </span>
-
-          <button
-            class="flip-back-button"
-            type="button"
-            aria-label="Return to the front of ${item.term}"
-          >
-            Flip back
-          </button>
-        </div>
-      </div>
+        </span>
+      </span>
     `;
 
-    const frontFace = card.querySelector(".flashcard-front");
-    const backButton = card.querySelector(".flip-back-button");
-
-    frontFace.addEventListener("click", () => {
-      card.classList.add("flipped");
-    });
-
-    backButton.addEventListener("click", () => {
-      card.classList.remove("flipped");
-      frontFace.focus();
+    card.addEventListener("click", () => {
+      card.classList.toggle("flipped");
     });
 
     flashcardGrid.appendChild(card);
@@ -535,6 +565,8 @@ function renderStudyDeck() {
     flashcardGrid.innerHTML =
       '<p class="panel empty-state">No terms matched that search.</p>';
   }
+
+  fitStudyCards();
 }
 
 studySearch.addEventListener("input", renderStudyDeck);
@@ -1141,3 +1173,9 @@ sourcesDialog.addEventListener("click", (event) => {
 renderStudyFilters();
 renderStudyDeck();
 updateDashboard();
+
+window.addEventListener("resize", scheduleStudyCardFit);
+
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(fitStudyCards);
+}
