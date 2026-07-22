@@ -472,23 +472,29 @@ function renderStudyDeck() {
   flashcardGrid.innerHTML = "";
 
   visible.forEach((item) => {
-    const card = document.createElement("button");
-    card.type = "button";
+    const card = document.createElement("article");
     card.className = "flashcard";
-    card.setAttribute("aria-label", `Flip flashcard for ${item.term}`);
 
     card.innerHTML = `
-      <span class="flashcard-inner">
-        <span class="flashcard-face flashcard-front">
+      <div class="flashcard-inner">
+        <button
+          class="flashcard-face flashcard-front"
+          type="button"
+          aria-label="Reveal the study note for ${item.term}"
+        >
           <span class="flashcard-category">
             ${categoryIcons[item.category] || "📚"} ${item.category}
           </span>
           <h2>${item.term}</h2>
           <span class="flashcard-date">${item.date}</span>
           <span class="flip-hint">Tap to reveal the study note</span>
-        </span>
+        </button>
 
-        <span class="flashcard-face flashcard-back">
+        <div
+          class="flashcard-face flashcard-back"
+          role="region"
+          aria-label="Study note for ${item.term}"
+        >
           <span class="flashcard-category">${item.date}</span>
           <h3>${item.term}</h3>
           <p>${item.summary}</p>
@@ -498,12 +504,28 @@ function renderStudyDeck() {
           <span class="mastered-label">
             ${masteredTerms.has(item.term) ? "✅ Mastered" : "Keep practicing"}
           </span>
-        </span>
-      </span>
+
+          <button
+            class="flip-back-button"
+            type="button"
+            aria-label="Return to the front of ${item.term}"
+          >
+            Flip back
+          </button>
+        </div>
+      </div>
     `;
 
-    card.addEventListener("click", () => {
-      card.classList.toggle("flipped");
+    const frontFace = card.querySelector(".flashcard-front");
+    const backButton = card.querySelector(".flip-back-button");
+
+    frontFace.addEventListener("click", () => {
+      card.classList.add("flipped");
+    });
+
+    backButton.addEventListener("click", () => {
+      card.classList.remove("flipped");
+      frontFace.focus();
     });
 
     flashcardGrid.appendChild(card);
