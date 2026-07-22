@@ -3,77 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Berry Vibes Studio-inspired HIST 1301 study battle game.">
+  <meta name="description" content="Berry Vibes History Battle, a playful HIST 1301 study game.">
   <title>Berry Vibes History Battle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#top"><span>🍓</span><b>Berry Vibes Studio</b><small>History Battle</small></a>
-    <button id="soundBtn" class="ghost" type="button" aria-pressed="true">🔊 Sound On</button>
+    <a class="logo" href="#" data-home>🍓 <span>Berry Vibes Studio</span></a>
+    <div class="best">🏆 Best: <strong id="bestScore">0</strong></div>
   </header>
 
-  <main id="top" class="shell">
-    <section class="hero panel">
-      <div>
-        <p class="eyebrow">HIST 1301 • EXAM 1 STUDY QUEST</p>
-        <h1>Berry Vibes History Battle</h1>
-        <p class="lead">Defeat the History Gremlin with multiple-choice battles, boss terms, study streaks, explanations, and a draggable timeline puzzle.</p>
-        <div class="tags"><span>⚔️ Battle Quiz</span><span>⏱️ Exam Mode</span><span>👑 Boss Rush</span><span>🧩 Puzzle</span></div>
+  <main class="shell">
+    <section id="homeScreen" class="screen active">
+      <div class="hero">
+        <div>
+          <p class="eyebrow">HIST 1301 STUDY ARCADE</p>
+          <h1>Berry Vibes<br>History Battle</h1>
+          <p class="lead">Battle the History Gremlin, master all thirty Exam 1 terms, and rebuild the timeline before test day.</p>
+          <div class="chips"><span>⚔️ Multiple Choice</span><span>🧩 Puzzle Mode</span><span>⏱️ Exam Timer</span></div>
+        </div>
+        <div class="mascot" aria-label="BerryBelle mascot">🍓<p><b>BerryBelle says:</b><br>Wrong answers are clues wearing tiny villain capes.</p></div>
       </div>
-      <aside class="mascot"><div>🍓</div><b>BerryBelle</b><p>Your tiny but academically dangerous study champion.</p></aside>
-    </section>
 
-    <section class="stats" aria-label="Game statistics">
-      <article><span>Score</span><b id="score">0</b></article>
-      <article><span>Streak</span><b id="streak">0 🔥</b></article>
-      <article><span>Question</span><b id="questionCount">0/0</b></article>
-      <article><span>Best Score</span><b id="bestScore">0</b></article>
-    </section>
-
-    <section id="menu" class="panel screen">
-      <div class="heading"><div><p class="eyebrow">CHOOSE YOUR QUEST</p><h2>Pick a battle mode</h2></div><span class="pill">30 key terms</span></div>
+      <div class="heading"><div><p class="eyebrow">CHOOSE YOUR QUEST</p><h2>Pick a study mode</h2></div><span>✨📚✨</span></div>
       <div class="modes">
-        <button data-mode="warmup"><span>🍓</span><b>Warm-Up Battle</b><small>10 random questions • untimed</small></button>
-        <button data-mode="exam"><span>⏱️</span><b>Exam Simulation</b><small>25 questions • 30 minutes</small></button>
-        <button data-mode="full"><span>📚</span><b>Full Berry Quest</b><small>All 30 terms • untimed</small></button>
-        <button data-mode="boss"><span>👑</span><b>Boss Rush</b><small>Four bold key terms</small></button>
+        <button data-mode="warmup"><b>🍓 Warm-Up Battle</b><small>10 random questions • untimed</small></button>
+        <button data-mode="exam"><b>⏱️ Exam Simulator</b><small>25 questions • 30 minutes</small></button>
+        <button data-mode="full"><b>👑 Full Berry Quest</b><small>All 30 terms • untimed</small></button>
+        <button data-mode="boss"><b>⚔️ Bold-Term Boss Rush</b><small>Four highlighted terms</small></button>
+        <button id="timelineStart" class="wide"><b>🧩 Timeline Berry Quilt</b><small>Drag or move events from earliest to latest</small></button>
       </div>
-      <button id="openPuzzle" class="secondary wide" type="button">🧩 Open Timeline Berry Quilt</button>
-      <p class="note">Based on the supplied Exam 1 key-term sheet. Professor Schulze’s lecture wording takes priority.</p>
+      <div class="exam-strip"><span>📝 25 questions</span><span>⏳ 30 minutes</span><span>💻 One sitting</span><span>📚 Posted key terms</span></div>
     </section>
 
-    <section id="game" class="hidden">
-      <div class="battle panel">
-        <div><div class="fighter"><b>🧁 BerryBelle</b><span id="heroLabel">3 shields</span></div><div class="bar"><i id="heroBar"></i></div></div>
-        <div class="vs">⚔️</div>
-        <div><div class="fighter"><b>📜 History Gremlin</b><span id="enemyLabel">Ready</span></div><div class="bar enemy"><i id="enemyBar"></i></div></div>
+    <section id="battleScreen" class="screen">
+      <div class="battlebar">
+        <button class="ghost" data-home>← Exit</button>
+        <div class="stats"><span>Score <b id="score">0</b></span><span>Streak <b id="streak">0 🔥</b></span><span>Question <b id="counter">1/10</b></span><span>Time <b id="timer">∞</b></span></div>
       </div>
-      <div class="panel question-panel">
-        <div class="toolbar"><span id="category" class="pill">Category</span><div><span id="timer" class="timer hidden">30:00</span><button id="burst" class="ghost" type="button" disabled>✨ Berry Burst</button></div></div>
-        <div class="progress"><i id="progress"></i></div>
-        <h2 id="prompt"></h2>
+
+      <div class="fighters">
+        <div><b>🍓 BerryBelle</b><small>Study shields: <span id="shieldText">3/3</span></small><div class="bar"><i id="heroBar"></i></div></div>
+        <strong class="vs">VS</strong>
+        <div><b>📜 History Gremlin</b><small>Questions left: <span id="enemyText">10</span></small><div class="bar enemy"><i id="enemyBar"></i></div></div>
+      </div>
+
+      <div class="progress"><i id="progressBar"></i></div>
+
+      <article class="question-card">
+        <div class="question-top"><span id="category">Category</span><button id="burst" disabled>✨ Berry Burst<br><small>Remove two</small></button></div>
+        <h2 id="question">Question appears here</h2>
         <div id="answers" class="answers"></div>
-        <div id="feedback" class="feedback hidden" role="status"></div>
-        <button id="next" class="primary wide hidden" type="button">Next Question ➜</button>
+        <div id="feedback" class="feedback" hidden></div>
+        <button id="next" class="primary" hidden>Next Question →</button>
+      </article>
+    </section>
+
+    <section id="resultsScreen" class="screen">
+      <article class="results">
+        <div id="resultEmoji" class="big-emoji">🏆</div>
+        <p class="eyebrow">BATTLE COMPLETE</p>
+        <h2 id="resultTitle">Berry Scholar Victory!</h2>
+        <p id="resultMessage"></p>
+        <div class="result-grid"><span>Score <b id="finalScore">0</b></span><span>Accuracy <b id="accuracy">0%</b></span><span>Best streak <b id="bestStreak">0</b></span></div>
+        <div id="reviewBox"><h3>📌 Terms to review</h3><div id="reviewTerms" class="chips"></div></div>
+        <blockquote>Empires may clash and timelines may twist,<br>but a term you review is a term you won't miss. 🍓</blockquote>
+        <div class="actions"><button class="ghost" data-home>Choose another mode</button><button id="retry" class="primary">Battle again</button></div>
+      </article>
+    </section>
+
+    <section id="timelineScreen" class="screen">
+      <div class="heading"><div><p class="eyebrow">DRAGGABLE PUZZLE MODE</p><h2>Timeline Berry Quilt</h2><p>Drag on desktop or use the arrows on your phone.</p></div><button class="ghost" data-home>← Exit</button></div>
+      <div class="puzzle">
+        <ol id="timelineList"></ol>
+        <aside>
+          <h3>🫐 Correct positions</h3>
+          <strong id="puzzleScore">0 / 10</strong>
+          <p id="puzzleMessage">Arrange every tile, then check your quilt.</p>
+          <button id="checkTimeline" class="primary">✅ Check Timeline</button>
+          <button id="hintTimeline" class="ghost">💡 Place One Hint</button>
+          <button id="shuffleTimeline" class="ghost">🔀 Shuffle Again</button>
+        </aside>
       </div>
-    </section>
-
-    <section id="results" class="panel screen hidden">
-      <div class="result-head"><div>🏆</div><div><p class="eyebrow">BATTLE COMPLETE</p><h2 id="resultTitle"></h2><p id="resultStats"></p></div></div>
-      <div id="missedWrap"><h3>📌 Terms to review</h3><div id="missed" class="chips"></div></div>
-      <div class="actions"><button id="again" class="secondary" type="button">🔁 Another Battle</button><button id="resultPuzzle" class="primary" type="button">🧩 Timeline Puzzle</button></div>
-    </section>
-
-    <section id="puzzle" class="panel screen hidden">
-      <div class="heading"><div><p class="eyebrow">DRAGGABLE HISTORY PUZZLE</p><h2>Timeline Berry Quilt</h2><p>Arrange events from earliest to latest. Drag on desktop or use arrows on mobile.</p></div><button id="closePuzzle" class="secondary" type="button">Back</button></div>
-      <ol id="timeline"></ol>
-      <div id="puzzleFeedback" class="feedback">Arrange all ten tiles, then check your timeline.</div>
-      <div class="actions"><button id="shufflePuzzle" class="secondary" type="button">🔀 Shuffle</button><button id="hintPuzzle" class="secondary" type="button">💡 Hint</button><button id="checkPuzzle" class="primary" type="button">✅ Check</button></div>
     </section>
   </main>
 
-  <footer>Designed for Danielle’s HIST 1301 study quest • Berry Vibes Studio 🍓</footer>
+  <footer>Made for HIST 1301 by <b>Berry Vibes Studio</b> 🍓<br><small>Your professor's lecture wording is the final authority.</small></footer>
   <script src="script.js"></script>
 </body>
 </html>
