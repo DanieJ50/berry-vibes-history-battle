@@ -1,723 +1,662 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <meta
-    name="description"
-    content="A playful Berry Vibes Studio history study battle, matching puzzle, flashcard deck, and 25-question exam simulator."
-  >
-
-  <title>Berry Vibes History Battle — HIST 1301 Exam 1</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Chewy&family=Nunito:wght@500;700;800;900&display=swap"
-    rel="stylesheet"
-  >
-
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/script.js" defer></script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="A playful Berry Vibes Studio history study battle, matching puzzle, flashcard deck, and 25-question exam simulator." name="description"/>
+<title>Berry Vibes History Battle — HIST 1301 Exam 1</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Chewy&amp;family=Nunito:wght@500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="css/style.css" rel="stylesheet"/>
+<script defer="" src="js/script.js"></script>
 </head>
-
 <body>
-  <div class="background-berries" aria-hidden="true">
-    <span>🍓</span><span>📜</span><span>✨</span><span>🏛️</span>
-    <span>🫐</span><span>🗺️</span><span>🍒</span><span>⭐</span>
-  </div>
-
-  <header class="site-header">
-    <a class="brand" href="#home" data-view-link="home">
-      <img src="images/BerryBelle.jpg" alt="">
-      <span>
-        <strong>Berry Vibes History Battle</strong>
-        <small>HIST 1301 · Exam 1 Study App</small>
-      </span>
-    </a>
-
-    <button
-      class="menu-button"
-      id="menu-button"
-      type="button"
-      aria-expanded="false"
-      aria-controls="main-nav"
-    >
+<div aria-hidden="true" class="background-berries">
+<span>🍓</span><span>📜</span><span>✨</span><span>🏛️</span>
+<span>🫐</span><span>🗺️</span><span>🍒</span><span>⭐</span>
+</div>
+<header class="site-header">
+<a class="brand" data-view-link="home" href="#home">
+<img alt="" src="images/BerryBelle.jpg"/>
+<span>
+<strong>Berry Vibes History Battle</strong>
+<small>HIST 1301 · Exam 1 Study App</small>
+</span>
+</a>
+<button aria-controls="main-nav" aria-expanded="false" class="menu-button" id="menu-button" type="button">
       Menu ☰
     </button>
-
-    <nav class="main-nav" id="main-nav" aria-label="Study modes">
-      <button type="button" data-view-link="home">Home</button>
-      <button type="button" data-view-link="study">Study Deck</button>
-      <button type="button" data-view-link="battle">Battle</button>
-      <button type="button" data-view-link="match">Match Puzzle</button>
-      <button type="button" data-view-link="exam">Exam Simulator</button>
-
-      <button
-        type="button"
-        class="profile-nav-button"
-        data-view-link="profile"
-        aria-label="Open profile"
-      >
-        <span class="nav-profile-avatar">
-          <img id="nav-profile-photo" alt="" hidden>
-          <span id="nav-profile-icon" aria-hidden="true">🍓</span>
-        </span>
-
-        <span id="nav-profile-name">Profile</span>
-      </button>
-    </nav>
-  </header>
-
-  <main>
-    <section class="view active" id="home-view" data-view="home">
-      <div class="hero panel">
-        <div class="hero-copy">
-          <p class="eyebrow">BerryBelle's History Training Ground</p>
-
-          <h1>Battle the past. Master all 30 key terms.</h1>
-
-          <p class="hero-text">
-            Study the professor's Exam 1 list through flashcards, multiple-choice
-            battles, matching puzzles, and a timed practice exam.
-          </p>
-
-          <div class="exam-format">
-            <span>📝 25 questions</span>
-            <span>⏱️ 30 minutes</span>
-            <span>🎯 One-sitting practice</span>
-          </div>
-
-          <div class="hero-actions">
-            <button
-              class="button button-primary"
-              type="button"
-              data-view-link="battle"
-            >
-              Start a history battle
-            </button>
-
-            <button
-              class="button button-secondary"
-              type="button"
-              data-view-link="exam"
-            >
-              Try the exam simulator
-            </button>
-          </div>
-        </div>
-
-        <figure class="mascot-card">
-          <div class="mascot-ring" aria-hidden="true"></div>
-          <img
-            src="images/BerryBelle.jpg"
-            alt="BerryBelle, a pink strawberry milk carton mascot"
-          >
-          <figcaption>BerryBelle says: no panic, just practice 🍓</figcaption>
-        </figure>
-      </div>
-
-      <section class="mode-grid" aria-label="Available study modes">
-        <article class="mode-card panel">
-          <span class="mode-icon">📚</span>
-          <h2>Study Deck</h2>
-          <p>Search, filter, flip, and master every term from the key-term sheet.</p>
-          <button type="button" data-view-link="study">Open the deck</button>
-        </article>
-
-        <article class="mode-card panel">
-          <span class="mode-icon">⚔️</span>
-          <h2>Berry Battle</h2>
-          <p>Defeat the Forget-Me-Not Beast with correct multiple-choice answers.</p>
-          <button type="button" data-view-link="battle">Enter battle</button>
-        </article>
-
-        <article class="mode-card panel">
-          <span class="mode-icon">🧩</span>
-          <h2>Match Puzzle</h2>
-          <p>Drag or tap terms into their matching definitions.</p>
-          <button type="button" data-view-link="match">Build a puzzle</button>
-        </article>
-
-        <article class="mode-card panel">
-          <span class="mode-icon">⏳</span>
-          <h2>Exam Simulator</h2>
-          <p>Practice the real format: 25 questions with a 30-minute countdown.</p>
-          <button type="button" data-view-link="exam">Practice the exam</button>
-        </article>
-      </section>
-
-      <section class="dashboard panel">
-        <div>
-          <p class="section-label">Your progress</p>
-          <h2>History mastery garden</h2>
-          <p id="mastery-message">Master terms by answering correctly in any mode.</p>
-        </div>
-
-        <div class="mastery-display">
-          <span id="mastered-count">0</span>
-          <small>of 30 terms mastered</small>
-        </div>
-
-        <div class="mastery-track" aria-hidden="true">
-          <div id="mastery-fill"></div>
-        </div>
-
-        <p class="best-score">
-          Best exam score:
-          <strong id="best-exam-score">No attempt yet</strong>
-        </p>
-      </section>
-
-      <aside class="honor-note">
-        <strong>Study-aid note:</strong>
-        Use this before the Honorlock exam, not during it.
-      </aside>
-    </section>
-
-    <section class="view" id="study-view" data-view="study" hidden>
-      <div class="section-hero panel">
-        <div>
-          <p class="eyebrow">Mode 1 · Learn the map</p>
-          <h1>Key-Term Study Deck</h1>
-          <p>Click any card to reveal the definition, date, and memory hook.</p>
-        </div>
-
-        <button class="button button-secondary" id="shuffle-study" type="button">
+<nav aria-label="Study modes" class="main-nav" id="main-nav">
+<button data-view-link="home" type="button">Path</button>
+<button data-view-link="study" type="button">Study Deck</button>
+<button data-view-link="battle" type="button">Battle</button>
+<button data-view-link="match" type="button">Match Puzzle</button>
+<button data-view-link="exam" type="button">Exam Simulator</button>
+<button aria-label="Open profile" class="profile-nav-button" data-view-link="profile" type="button">
+<span class="nav-profile-avatar">
+<img alt="" hidden="" id="nav-profile-photo"/>
+<span aria-hidden="true" id="nav-profile-icon">🍓</span>
+</span>
+<span id="nav-profile-name">Profile</span>
+</button>
+</nav>
+</header>
+<main>
+<section class="view active" data-view="home" id="home-view">
+<section aria-label="Player course statistics" class="course-status-bar panel">
+<div class="course-status-item">
+<span aria-hidden="true" class="course-status-icon">📜</span>
+<span>
+<small>Course</small>
+<strong>HIST 1301</strong>
+</span>
+</div>
+<div class="course-status-item">
+<span aria-hidden="true" class="course-status-icon">🔥</span>
+<span>
+<small>Streak</small>
+<strong id="path-streak-stat">0 days</strong>
+</span>
+</div>
+<div class="course-status-item">
+<span aria-hidden="true" class="course-status-icon">⚡</span>
+<span>
+<small>Total XP</small>
+<strong id="path-xp-stat">0 XP</strong>
+</span>
+</div>
+<div class="course-status-item">
+<span aria-hidden="true" class="course-status-icon">🧠</span>
+<span>
+<small>Mastered</small>
+<strong id="path-mastered-stat">0 / 30</strong>
+</span>
+</div>
+<div class="course-status-item">
+<span aria-hidden="true" class="course-status-icon">🏆</span>
+<span>
+<small>Badges</small>
+<strong id="path-badge-stat">0</strong>
+</span>
+</div>
+</section>
+<section aria-labelledby="difficulty-title" class="difficulty-card panel">
+<div>
+<p class="section-label">Adjustable challenge</p>
+<h1 id="difficulty-title">Choose your difficulty</h1>
+<p id="difficulty-description">
+        Standard mirrors the professor's 25-question, 30-minute exam format.
+      </p>
+</div>
+<div class="difficulty-picker" id="path-difficulty-picker">
+<button data-difficulty="beginner" type="button">
+<span>🌱</span>
+<strong>Beginner</strong>
+<small>More hints · 3 choices</small>
+</button>
+<button data-difficulty="standard" type="button">
+<span>🎯</span>
+<strong>Standard</strong>
+<small>Real exam pace · 4 choices</small>
+</button>
+<button data-difficulty="hard" type="button">
+<span>🔥</span>
+<strong>Hard</strong>
+<small>Less time · 5 choices</small>
+</button>
+<button data-difficulty="expert" type="button">
+<span>👑</span>
+<strong>Expert</strong>
+<small>Maximum pressure · 6 choices</small>
+</button>
+</div>
+</section>
+<section aria-labelledby="path-unit-title" class="unit-banner panel">
+<div>
+<p class="unit-kicker" id="path-section-label">SECTION 1, UNIT 1</p>
+<h2 id="path-unit-title">Indigenous Worlds Before Contact</h2>
+<p id="path-unit-description">
+        Build the foundations: migration, settlement, cities, and Native power.
+      </p>
+</div>
+<div class="unit-banner-actions">
+<span id="path-unit-progress">0 / 4 lessons</span>
+<button aria-label="Jump to the next lesson" id="path-jump-button" type="button">☷</button>
+</div>
+</section>
+<section class="path-intro panel">
+<div class="path-intro-avatar">
+<img alt="BerryBelle, the History Path guide" src="images/BerryBelle.jpg"/>
+</div>
+<div>
+<p class="section-label">BerryBelle's learning path</p>
+<h2>Complete lessons in order to unlock the next node.</h2>
+<p>
+        Each unit follows the professor's Exam 1 terms. Finish a node to earn XP,
+        reveal stars, and open the next history lesson.
+      </p>
+</div>
+</section>
+<section aria-label="HIST 1301 lesson path" class="learning-path" id="learning-path"></section>
+<aside class="honor-note">
+<strong>Study-aid note:</strong>
+    Use the learning path before the Honorlock exam, not during it.
+  </aside>
+</section>
+<section class="view" data-view="study" hidden="" id="study-view">
+<div class="section-hero panel">
+<div>
+<p class="eyebrow">Mode 1 · Learn the map</p>
+<h1>Key-Term Study Deck</h1>
+<p>Click any card to reveal the definition, date, and memory hook.</p>
+</div>
+<button class="button button-secondary" id="shuffle-study" type="button">
           Shuffle cards
         </button>
-      </div>
-
-      <section class="study-tools panel">
-        <label>
-          <span>Search the deck</span>
-          <input
-            id="study-search"
-            type="search"
-            placeholder="Try rebellion, religion, Boston…"
-          >
-        </label>
-
-        <div id="study-filters" class="filter-row"></div>
-      </section>
-
-      <section
-        id="flashcard-grid"
-        class="flashcard-grid"
-        aria-label="History study flashcards"
-      ></section>
-    </section>
-
-    <section class="view" id="battle-view" data-view="battle" hidden>
-      <div class="section-hero panel">
-        <div>
-          <p class="eyebrow">Mode 2 · Multiple-choice combat</p>
-          <h1>Berry Battle Arena</h1>
-          <p>Correct answers damage the Forget-Me-Not Beast. Three mistakes end the round.</p>
-        </div>
-
-        <button class="button button-primary" id="start-battle" type="button">
+</div>
+<section class="study-tools panel">
+<label>
+<span>Search the deck</span>
+<input id="study-search" placeholder="Try rebellion, religion, Boston…" type="search"/>
+</label>
+<div class="filter-row" id="study-filters"></div>
+</section>
+<section aria-label="History study flashcards" class="flashcard-grid" id="flashcard-grid"></section>
+</section>
+<section class="view" data-view="battle" hidden="" id="battle-view">
+<div class="section-hero panel">
+<div>
+<p class="eyebrow">Mode 2 · Multiple-choice combat</p>
+<h1>Berry Battle Arena</h1>
+<p id="battle-mode-description">Correct answers damage the Forget-Me-Not Beast. Three mistakes end the round.</p>
+</div>
+<button class="button button-primary" id="start-battle" type="button">
           Start a new battle
         </button>
-      </div>
-
-      <section class="battle-arena panel">
-        <div class="battle-hud">
-          <div class="hud-box">
-            <span>Player hearts</span>
-            <strong id="battle-hearts">❤️ ❤️ ❤️</strong>
-          </div>
-
-          <div class="enemy-card">
-            <div class="enemy-face" aria-hidden="true">👾</div>
-            <div>
-              <span>Forget-Me-Not Beast</span>
-              <div class="enemy-health">
-                <div id="enemy-health-fill"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="hud-box">
-            <span>Score / streak</span>
-            <strong>
-              <span id="battle-score">0</span>
+</div>
+<section class="battle-arena panel">
+<div class="battle-hud">
+<div class="hud-box">
+<span>Player hearts</span>
+<strong id="battle-hearts">❤️ ❤️ ❤️</strong>
+</div>
+<div class="enemy-card">
+<div aria-hidden="true" class="enemy-face">👾</div>
+<div>
+<span>Forget-Me-Not Beast</span>
+<div class="enemy-health">
+<div id="enemy-health-fill"></div>
+</div>
+</div>
+</div>
+<div class="hud-box">
+<span>Score / streak</span>
+<strong>
+<span id="battle-score">0</span>
               · 🔥 <span id="battle-streak">0</span>
-            </strong>
-          </div>
-        </div>
-
-        <div id="battle-welcome" class="empty-state">
-          <span>⚔️🍓⚔️</span>
-          <h2>Ready when you are.</h2>
-          <p>Press “Start a new battle” to load 12 questions.</p>
-        </div>
-
-        <div id="battle-game" hidden>
-          <div class="question-progress">
-            <span id="battle-progress-text">Question 1 of 12</span>
-            <div class="mini-progress">
-              <div id="battle-progress-fill"></div>
-            </div>
-          </div>
-
-          <article class="question-card">
-            <p class="question-type" id="battle-question-type">Definition battle</p>
-            <h2 id="battle-question"></h2>
-            <div id="battle-options" class="option-grid"></div>
-            <p id="battle-feedback" class="feedback" role="status" aria-live="polite"></p>
-          </article>
-
-          <button
-            class="button button-primary next-button"
-            id="battle-next"
-            type="button"
-            hidden
-          >
+</strong>
+</div>
+</div>
+<div class="empty-state" id="battle-welcome">
+<span>⚔️🍓⚔️</span>
+<h2>Ready when you are.</h2>
+<p id="battle-welcome-copy">Press “Start a new battle” to load 12 questions.</p>
+</div>
+<div hidden="" id="battle-game">
+<div class="question-progress">
+<span id="battle-progress-text">Question 1 of 12</span>
+<div class="mini-progress">
+<div id="battle-progress-fill"></div>
+</div>
+</div>
+<article class="question-card">
+<p class="question-type" id="battle-question-type">Definition battle</p>
+<h2 id="battle-question"></h2>
+<div class="option-grid" id="battle-options"></div>
+<p aria-live="polite" class="feedback" id="battle-feedback" role="status"></p>
+</article>
+<button class="button button-primary next-button" hidden="" id="battle-next" type="button">
             Next battle question
           </button>
-        </div>
-
-        <div id="battle-results" class="results-card" hidden></div>
-      </section>
-    </section>
-
-    <section class="view" id="match-view" data-view="match" hidden>
-      <div class="section-hero panel">
-        <div>
-          <p class="eyebrow">Mode 3 · Puzzle garden</p>
-          <h1>Term-to-Definition Match</h1>
-          <p>Drag a term onto its definition, or tap a term and then tap a definition.</p>
-        </div>
-
-        <button class="button button-primary" id="new-match-puzzle" type="button">
+</div>
+<div class="results-card" hidden="" id="battle-results"></div>
+</section>
+</section>
+<section class="view" data-view="match" hidden="" id="match-view">
+<div class="section-hero panel">
+<div>
+<p class="eyebrow">Mode 3 · Puzzle garden</p>
+<h1>Term-to-Definition Match</h1>
+<p id="match-mode-description">Drag a term onto its definition, or tap a term and then tap a definition.</p>
+</div>
+<button class="button button-primary" id="new-match-puzzle" type="button">
           New six-term puzzle
         </button>
-      </div>
-
-      <section class="match-score panel">
-        <span id="match-score">0 of 6 matched</span>
-        <p id="match-message" role="status" aria-live="polite">
+</div>
+<section class="match-score panel">
+<span id="match-score">0 of 6 matched</span>
+<p aria-live="polite" id="match-message" role="status">
           Choose a term to begin.
         </p>
-      </section>
-
-      <section class="matching-board">
-        <div class="match-column panel">
-          <p class="section-label">Term tiles</p>
-          <h2>Pick up a term</h2>
-          <div id="match-terms" class="match-term-list"></div>
-        </div>
-
-        <div class="match-column panel">
-          <p class="section-label">Definition spaces</p>
-          <h2>Find its meaning</h2>
-          <div id="match-definitions" class="match-definition-list"></div>
-        </div>
-      </section>
-    </section>
-
-    <section class="view" id="exam-view" data-view="exam" hidden>
-      <div class="section-hero panel">
-        <div>
-          <p class="eyebrow">Mode 4 · Timed practice</p>
-          <h1>Exam 1 Simulator</h1>
-          <p>Twenty-five randomized multiple-choice questions. Thirty minutes. One practice sitting.</p>
-        </div>
-      </div>
-
-      <section id="exam-intro" class="exam-intro panel">
-        <div class="exam-warning">
-          <span>⏱️</span>
-          <div>
-            <h2>Practice the exact pace</h2>
-            <p>
+</section>
+<section class="matching-board">
+<div class="match-column panel">
+<p class="section-label">Term tiles</p>
+<h2>Pick up a term</h2>
+<div class="match-term-list" id="match-terms"></div>
+</div>
+<div class="match-column panel">
+<p class="section-label">Definition spaces</p>
+<h2>Find its meaning</h2>
+<div class="match-definition-list" id="match-definitions"></div>
+</div>
+</section>
+</section>
+<section class="view" data-view="exam" hidden="" id="exam-view">
+<div class="section-hero panel">
+<div>
+<p class="eyebrow">Mode 4 · Timed practice</p>
+<h1>Exam 1 Simulator</h1>
+<p id="exam-mode-description">Twenty-five randomized multiple-choice questions. Thirty minutes. One practice sitting.</p>
+</div>
+</div>
+<section class="exam-intro panel" id="exam-intro">
+<div class="exam-warning">
+<span>⏱️</span>
+<div>
+<h2>Practice the exact pace</h2>
+<p id="exam-format-copy">
               You will have about 72 seconds per question. Once started, the timer keeps running
               until you finish or time expires.
             </p>
-          </div>
-        </div>
-
-        <ul>
-          <li>25 questions drawn from all 30 professor-listed terms</li>
-          <li>No hints during the practice exam</li>
-          <li>A review screen appears after submission</li>
-          <li>Your best score is stored in this browser</li>
-        </ul>
-
-        <button class="button button-primary" id="start-exam" type="button">
+</div>
+</div>
+<ul id="exam-rule-list">
+<li>25 questions drawn from all 30 professor-listed terms</li>
+<li>No hints during the practice exam</li>
+<li>A review screen appears after submission</li>
+<li>Your best score is stored in this browser</li>
+</ul>
+<button class="button button-primary" id="start-exam" type="button">
           Begin 30-minute practice exam
         </button>
-      </section>
-
-      <section id="exam-active" class="exam-active panel" hidden>
-        <div class="exam-topbar">
-          <div>
-            <span id="exam-question-number">Question 1 of 25</span>
-            <div class="mini-progress">
-              <div id="exam-progress-fill"></div>
-            </div>
-          </div>
-
-          <div class="timer" id="exam-timer" aria-live="polite">30:00</div>
-        </div>
-
-        <article class="question-card">
-          <p class="question-type" id="exam-question-type">Definition question</p>
-          <h2 id="exam-question"></h2>
-          <div id="exam-options" class="option-grid"></div>
-        </article>
-
-        <div class="exam-actions">
-          <p id="exam-selection-message">Select one answer.</p>
-          <button
-            class="button button-primary"
-            id="exam-next"
-            type="button"
-            disabled
-          >
+</section>
+<section class="exam-active panel" hidden="" id="exam-active">
+<div class="exam-topbar">
+<div>
+<span id="exam-question-number">Question 1 of 25</span>
+<div class="mini-progress">
+<div id="exam-progress-fill"></div>
+</div>
+</div>
+<div aria-live="polite" class="timer" id="exam-timer">30:00</div>
+</div>
+<article class="question-card">
+<p class="question-type" id="exam-question-type">Definition question</p>
+<h2 id="exam-question"></h2>
+<div class="option-grid" id="exam-options"></div>
+</article>
+<div class="exam-actions">
+<p id="exam-selection-message">Select one answer.</p>
+<button class="button button-primary" disabled="" id="exam-next" type="button">
             Save answer and continue
           </button>
-        </div>
-      </section>
-
-      <section id="exam-results" class="results-card panel" hidden></section>
-    </section>
-
-    <section class="view" id="profile-view" data-view="profile" hidden>
-      <div class="section-hero profile-section-hero panel">
-        <div>
-          <p class="eyebrow">Your personal study space</p>
-          <h1>History Hero Profile</h1>
-          <p>
+</div>
+</section>
+<section class="results-card panel" hidden="" id="exam-results"></section>
+</section>
+<section class="view" data-view="profile" hidden="" id="profile-view">
+<div class="section-hero profile-section-hero panel">
+<div>
+<p class="eyebrow">Your personal study space</p>
+<h1>History Hero Profile</h1>
+<p>
             A bright, game-style profile hub for your identity, progress,
             levels, themes, and task-earned achievements.
           </p>
-        </div>
-
-        <div class="profile-hero-mini" aria-hidden="true">🔥🍓🏆</div>
-      </div>
-
-      <section class="duo-profile-layout">
-        <aside class="duo-profile-card panel" aria-labelledby="profile-preview-title">
-          <div class="profile-cover-art" aria-hidden="true">
-          </div>
-
-          <div class="profile-avatar-large">
-            <img id="profile-photo-preview" alt="Profile preview" hidden>
-            <span id="profile-icon-preview" aria-hidden="true">🍓</span>
-          </div>
-
-          <h2 id="profile-preview-title" class="sr-only">Your player card</h2>
-          <h3 id="profile-name-preview">History Hero</h3>
-
-          <p id="profile-bio-preview">
+</div>
+<div aria-hidden="true" class="profile-hero-mini">🔥</div>
+</div>
+<section class="duo-profile-layout">
+<aside aria-labelledby="profile-preview-title" class="duo-profile-card panel">
+<div aria-hidden="true" class="profile-cover-art">
+<span>⭐</span><span>📚</span><span>🍓</span>
+</div>
+<div class="profile-avatar-large">
+<img alt="Profile preview" hidden="" id="profile-photo-preview"/>
+<span aria-hidden="true" id="profile-icon-preview">🍓</span>
+</div>
+<h2 class="sr-only" id="profile-preview-title">Your player card</h2>
+<h3 id="profile-name-preview">History Hero</h3>
+<p id="profile-bio-preview">
             Ready to master every HIST 1301 key term.
           </p>
-
-          <div class="profile-preview-ribbon">
-            <span id="profile-ribbon-icon">🍓</span>
-            <span>Berry Vibes History Player</span>
-          </div>
-
-          <a class="button button-primary profile-edit-link" href="#profile-form">
+<div class="profile-preview-ribbon">
+<span id="profile-ribbon-icon">🍓</span>
+<span>Berry Vibes History Player</span>
+</div>
+<a class="button button-primary profile-edit-link" href="#profile-form">
             Edit profile
           </a>
-        </aside>
-
-        <div class="duo-profile-main">
-          <section class="duo-level-card panel" aria-labelledby="level-card-title">
-            <div class="level-badge" aria-hidden="true">
-              <span id="profile-level-medal">1</span>
-            </div>
-
-            <div class="level-copy">
-              <p class="section-label">Player level</p>
-              <h2 id="level-card-title">Level <span id="profile-level-stat">1</span></h2>
-              <p id="profile-level-message">Start studying to earn your first XP.</p>
-
-              <div class="level-progress-row">
-                <div>
-                  <span id="profile-xp-stat">0 XP</span>
-                  <strong id="profile-next-level-text">250 XP to Level 2</strong>
-                </div>
-
-                <div class="level-progress-track">
-                  <div id="profile-next-level-fill"></div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="duo-quick-stats panel" aria-label="Profile statistics">
-            <article class="duo-stat-tile streak-tile">
-              <span class="duo-stat-icon" aria-hidden="true">🔥</span>
-              <span>Study streak</span>
-              <strong id="profile-streak-stat">0 days</strong>
-            </article>
-
-            <article class="duo-stat-tile xp-tile">
-              <span class="duo-stat-icon" aria-hidden="true">⚡</span>
-              <span>Total XP</span>
-              <strong id="profile-xp-quick-stat">0 XP</strong>
-            </article>
-
-            <article class="duo-stat-tile mastery-tile">
-              <span class="duo-stat-icon" aria-hidden="true">🧠</span>
-              <span>Terms mastered</span>
-              <strong id="profile-mastered-stat">0 / 30</strong>
-            </article>
-
-            <article class="duo-stat-tile league-tile">
-              <span class="duo-stat-icon" aria-hidden="true">🏆</span>
-              <span>Badges</span>
-              <strong id="profile-badge-stat">0 / 8</strong>
-            </article>
-          </section>
-
-          <section class="profile-progress-panel panel" aria-labelledby="profile-progress-title">
-            <div class="profile-progress-heading">
-              <div>
-                <p class="section-label">Learning progress</p>
-                <h2 id="profile-progress-title">Your history journey</h2>
-              </div>
-
-              <p>
+</aside>
+<div class="duo-profile-main">
+<section aria-labelledby="level-card-title" class="duo-level-card panel">
+<div aria-hidden="true" class="level-badge">
+<span id="profile-level-medal">1</span>
+</div>
+<div class="level-copy">
+<p class="section-label">Player level</p>
+<h2 id="level-card-title">Level <span id="profile-level-stat">1</span></h2>
+<p id="profile-level-message">Start studying to earn your first XP.</p>
+<div class="level-progress-row">
+<div>
+<span id="profile-xp-stat">0 XP</span>
+<strong id="profile-next-level-text">250 XP to Level 2</strong>
+</div>
+<div class="level-progress-track">
+<div id="profile-next-level-fill"></div>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Profile statistics" class="duo-quick-stats panel">
+<article class="duo-stat-tile streak-tile">
+<span aria-hidden="true" class="duo-stat-icon">🔥</span>
+<span>Study streak</span>
+<strong id="profile-streak-stat">0 days</strong>
+</article>
+<article class="duo-stat-tile xp-tile">
+<span aria-hidden="true" class="duo-stat-icon">⚡</span>
+<span>Total XP</span>
+<strong id="profile-xp-quick-stat">0 XP</strong>
+</article>
+<article class="duo-stat-tile mastery-tile">
+<span aria-hidden="true" class="duo-stat-icon">🧠</span>
+<span>Terms mastered</span>
+<strong id="profile-mastered-stat">0 / 30</strong>
+</article>
+<article class="duo-stat-tile league-tile">
+<span aria-hidden="true" class="duo-stat-icon">🏆</span>
+<span>Badges</span>
+<strong id="profile-badge-stat">0 / 10</strong>
+</article>
+<article class="duo-stat-tile path-tile">
+<span aria-hidden="true" class="duo-stat-icon">🛤️</span>
+<span>Path lessons</span>
+<strong id="profile-path-quick-stat">0 / 28</strong>
+</article><article class="duo-stat-tile difficulty-tile">
+<span aria-hidden="true" class="duo-stat-icon">🎚️</span>
+<span>Difficulty</span>
+<strong id="profile-difficulty-stat">Standard</strong>
+</article></section>
+<section aria-labelledby="profile-progress-title" class="profile-progress-panel panel">
+<div class="profile-progress-heading">
+<div>
+<p class="section-label">Learning progress</p>
+<h2 id="profile-progress-title">Your history journey</h2>
+</div>
+<p>
                 These numbers only grow when you actually study or complete a game task.
               </p>
-            </div>
-
-            <div class="profile-stat-grid">
-              <article class="profile-stat-card">
-                <span>Best exam</span>
-                <strong id="profile-exam-stat">No attempt</strong>
-              </article>
-
-              <article class="profile-stat-card">
-                <span>Cards explored</span>
-                <strong id="profile-card-stat">0 / 30</strong>
-              </article>
-
-              <article class="profile-stat-card">
-                <span>Battles completed</span>
-                <strong id="profile-battle-stat">0</strong>
-              </article>
-
-              <article class="profile-stat-card">
-                <span>Puzzles completed</span>
-                <strong id="profile-puzzle-stat">0</strong>
-              </article>
-            </div>
-
-            <div class="profile-progress-row">
-              <div>
-                <span>Term mastery</span>
-                <strong id="profile-mastery-percent">0%</strong>
-              </div>
-
-              <div class="profile-progress-track">
-                <div id="profile-mastery-fill"></div>
-              </div>
-            </div>
-
-            <div class="profile-progress-row">
-              <div>
-                <span>Achievement collection</span>
-                <strong id="profile-badge-percent">0%</strong>
-              </div>
-
-              <div class="profile-progress-track">
-                <div id="profile-badge-fill"></div>
-              </div>
-            </div>
-          </section>
-        </div>
-      </section>
-
-      <section class="badge-section panel" aria-labelledby="badge-section-title">
-        <div class="badge-section-heading">
-          <div>
-            <p class="section-label">Achievements</p>
-            <h2 id="badge-section-title">Badge path</h2>
-          </div>
-
-          <p>
+</div>
+<div class="profile-stat-grid">
+<article class="profile-stat-card">
+<span>Best exam</span>
+<strong id="profile-exam-stat">No attempt</strong>
+</article>
+<article class="profile-stat-card">
+<span>Cards explored</span>
+<strong id="profile-card-stat">0 / 30</strong>
+</article>
+<article class="profile-stat-card">
+<span>Battles completed</span>
+<strong id="profile-battle-stat">0</strong>
+</article>
+<article class="profile-stat-card">
+<span>Puzzles completed</span>
+<strong id="profile-puzzle-stat">0</strong>
+</article>
+<article class="profile-stat-card">
+<span>Path completed</span>
+<strong id="profile-path-stat">0 / 28</strong>
+</article></div>
+<div class="profile-progress-row">
+<div>
+<span>Term mastery</span>
+<strong id="profile-mastery-percent">0%</strong>
+</div>
+<div class="profile-progress-track">
+<div id="profile-mastery-fill"></div>
+</div>
+</div>
+<div class="profile-progress-row">
+<div>
+<span>Achievement collection</span>
+<strong id="profile-badge-percent">0%</strong>
+</div>
+<div class="profile-progress-track">
+<div id="profile-badge-fill"></div>
+</div>
+</div>
+</section>
+</div>
+</section>
+<section aria-labelledby="badge-section-title" class="badge-section panel">
+<div class="badge-section-heading">
+<div>
+<p class="section-label">Achievements</p>
+<h2 id="badge-section-title">Badge path</h2>
+</div>
+<p>
             Every badge has a visible task meter. Editing your profile never unlocks one.
           </p>
-        </div>
-
-        <div class="badge-grid" id="badge-grid"></div>
-      </section>
-
-      <form class="profile-editor panel" id="profile-form">
-        <div class="profile-card-heading">
-          <div>
-            <p class="section-label">Profile settings</p>
-            <h2>Edit your player identity</h2>
-          </div>
-
-          <span class="save-state" id="profile-save-state" role="status" aria-live="polite">
+</div>
+<div class="badge-grid" id="badge-grid"></div>
+</section>
+<form class="profile-editor panel" id="profile-form">
+<div class="profile-card-heading">
+<div>
+<p class="section-label">Profile settings</p>
+<h2>Edit your player identity</h2>
+</div>
+<span aria-live="polite" class="save-state" id="profile-save-state" role="status">
             Changes are saved when you press Save Profile.
           </span>
-        </div>
-
-        <div class="profile-editor-grid">
-          <div class="profile-editor-column">
-            <label class="profile-field" for="profile-name-input">
-              <span>Display name</span>
-              <input id="profile-name-input" type="text" maxlength="30" autocomplete="name" placeholder="History Hero">
-            </label>
-
-            <label class="profile-field" for="profile-bio-input">
-              <span>Bio</span>
-              <textarea id="profile-bio-input" maxlength="180" rows="4" placeholder="Tell people what you are studying or what keeps you motivated."></textarea>
-              <small><span id="bio-character-count">0</span> / 180 characters</small>
-            </label>
-
-            <fieldset class="profile-fieldset">
-              <legend>Choose your profile icon</legend>
-
-              <div class="icon-picker" id="profile-icon-picker">
-                <button type="button" data-profile-icon="🍓" aria-label="Choose strawberry icon">🍓</button>
-                <button type="button" data-profile-icon="📚" aria-label="Choose books icon">📚</button>
-                <button type="button" data-profile-icon="⚔️" aria-label="Choose battle icon">⚔️</button>
-                <button type="button" data-profile-icon="🧩" aria-label="Choose puzzle icon">🧩</button>
-                <button type="button" data-profile-icon="🏛️" aria-label="Choose history building icon">🏛️</button>
-                <button type="button" data-profile-icon="🗺️" aria-label="Choose map icon">🗺️</button>
-                <button type="button" data-profile-icon="⭐" aria-label="Choose star icon">⭐</button>
-                <button type="button" data-profile-icon="👑" aria-label="Choose crown icon">👑</button>
-                <button type="button" data-profile-icon="🌸" aria-label="Choose flower icon">🌸</button>
-                <button type="button" data-profile-icon="🫐" aria-label="Choose blueberry icon">🫐</button>
-              </div>
-            </fieldset>
-
-            <fieldset class="profile-fieldset">
-              <legend>Profile picture</legend>
-
-              <div class="photo-controls">
-                <label class="upload-button" for="profile-photo-input">Upload a picture</label>
-                <input id="profile-photo-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
-
-                <button class="button button-secondary compact-button" id="remove-profile-photo" type="button">
+</div>
+<div class="profile-editor-grid">
+<div class="profile-editor-column">
+<label class="profile-field" for="profile-name-input">
+<span>Display name</span>
+<input autocomplete="name" id="profile-name-input" maxlength="30" placeholder="History Hero" type="text"/>
+</label>
+<label class="profile-field" for="profile-bio-input">
+<span>Bio</span>
+<textarea id="profile-bio-input" maxlength="180" placeholder="Tell people what you are studying or what keeps you motivated." rows="4"></textarea>
+<small><span id="bio-character-count">0</span> / 180 characters</small>
+</label>
+<fieldset class="profile-fieldset">
+<legend>Choose your profile icon</legend>
+<div class="icon-picker" id="profile-icon-picker">
+<button aria-label="Choose strawberry icon" data-profile-icon="🍓" type="button">🍓</button>
+<button aria-label="Choose books icon" data-profile-icon="📚" type="button">📚</button>
+<button aria-label="Choose battle icon" data-profile-icon="⚔️" type="button">⚔️</button>
+<button aria-label="Choose puzzle icon" data-profile-icon="🧩" type="button">🧩</button>
+<button aria-label="Choose history building icon" data-profile-icon="🏛️" type="button">🏛️</button>
+<button aria-label="Choose map icon" data-profile-icon="🗺️" type="button">🗺️</button>
+<button aria-label="Choose star icon" data-profile-icon="⭐" type="button">⭐</button>
+<button aria-label="Choose crown icon" data-profile-icon="👑" type="button">👑</button>
+<button aria-label="Choose flower icon" data-profile-icon="🌸" type="button">🌸</button>
+<button aria-label="Choose blueberry icon" data-profile-icon="🫐" type="button">🫐</button>
+</div>
+</fieldset>
+<fieldset class="profile-fieldset">
+<legend>Profile picture</legend>
+<div class="photo-controls">
+<label class="upload-button" for="profile-photo-input">Upload a picture</label>
+<input accept="image/png,image/jpeg,image/webp,image/gif" hidden="" id="profile-photo-input" type="file"/>
+<button class="button button-secondary compact-button" id="remove-profile-photo" type="button">
                   Remove picture
                 </button>
-              </div>
-
-              <p class="profile-help">
+</div>
+<p class="profile-help">
                 Images are resized before being stored locally in your browser.
               </p>
-            </fieldset>
-          </div>
-
-          <div class="profile-editor-column">
-            <fieldset class="profile-fieldset theme-fieldset">
-              <legend>Choose a full app color theme</legend>
-
-              <p class="profile-help theme-help">
+</fieldset>
+</div>
+<div class="profile-editor-column">
+<fieldset class="profile-fieldset difficulty-profile-fieldset">
+<legend>Study difficulty</legend>
+<p class="profile-help">
+    This changes answer choices, hints, hearts, puzzle size, question count,
+    and the exam timer across the entire app.
+  </p>
+<div class="difficulty-picker profile-difficulty-picker" id="profile-difficulty-picker">
+<button data-difficulty="beginner" type="button">
+<span>🌱</span><strong>Beginner</strong><small>Gentle hints</small>
+</button>
+<button data-difficulty="standard" type="button">
+<span>🎯</span><strong>Standard</strong><small>Real exam format</small>
+</button>
+<button data-difficulty="hard" type="button">
+<span>🔥</span><strong>Hard</strong><small>Faster + tougher</small>
+</button>
+<button data-difficulty="expert" type="button">
+<span>👑</span><strong>Expert</strong><small>Maximum challenge</small>
+</button>
+</div>
+</fieldset><fieldset class="profile-fieldset theme-fieldset">
+<legend>Choose a full app color theme</legend>
+<p class="profile-help theme-help">
                 Each theme changes the background, buttons, borders, headings,
                 progress bars, accent colors, and strong text colors across the app.
               </p>
-
-              <div class="theme-picker" id="profile-theme-picker">
-                <button type="button" data-profile-theme="duo" aria-label="Choose Lime Quest theme">
-                  <span class="theme-swatch swatch-duo"></span><span>Lime Quest</span>
-                </button>
-                <button type="button" data-profile-theme="berry" aria-label="Choose Berry Blush theme">
-                  <span class="theme-swatch swatch-berry"></span><span>Berry Blush</span>
-                </button>
-                <button type="button" data-profile-theme="lavender" aria-label="Choose Lavender League theme">
-                  <span class="theme-swatch swatch-lavender"></span><span>Lavender League</span>
-                </button>
-                <button type="button" data-profile-theme="sunshine" aria-label="Choose Golden Streak theme">
-                  <span class="theme-swatch swatch-sunshine"></span><span>Golden Streak</span>
-                </button>
-                <button type="button" data-profile-theme="ocean" aria-label="Choose Ocean Lesson theme">
-                  <span class="theme-swatch swatch-ocean"></span><span>Ocean Lesson</span>
-                </button>
-                <button type="button" data-profile-theme="coral" aria-label="Choose Coral Combo theme">
-                  <span class="theme-swatch swatch-coral"></span><span>Coral Combo</span>
-                </button>
-                <button type="button" data-profile-theme="mint" aria-label="Choose Mint Garden theme">
-                  <span class="theme-swatch swatch-mint"></span><span>Mint Garden</span>
-                </button>
-                <button type="button" data-profile-theme="blueberry" aria-label="Choose Blueberry League theme">
-                  <span class="theme-swatch swatch-blueberry"></span><span>Blueberry League</span>
-                </button>
-                <button type="button" data-profile-theme="peach" aria-label="Choose Peach Practice theme">
-                  <span class="theme-swatch swatch-peach"></span><span>Peach Practice</span>
-                </button>
-                <button type="button" data-profile-theme="rose" aria-label="Choose Rose Champion theme">
-                  <span class="theme-swatch swatch-rose"></span><span>Rose Champion</span>
-                </button>
-              </div>
-            </fieldset>
-          </div>
-        </div>
-
-        <div class="profile-form-actions">
-          <button class="button button-primary" type="submit">Save Profile</button>
-          <button class="button button-secondary" id="reset-profile" type="button">Reset Profile</button>
-        </div>
-      </form>
-    </section>
-  </main>
-
-  <dialog id="sources-dialog" class="sources-dialog">
-    <div class="dialog-heading">
-      <div>
-        <p class="section-label">Study-note references</p>
-        <h2>Sources used to check the summaries</h2>
-      </div>
-
-      <button
-        class="dialog-close"
-        id="close-sources"
-        type="button"
-        aria-label="Close sources"
-      >
+<div class="theme-picker" id="profile-theme-picker">
+<button aria-label="Choose Lime Quest theme" data-profile-theme="duo" type="button">
+<span class="theme-swatch swatch-duo"></span><span>Lime Quest</span>
+</button>
+<button aria-label="Choose Berry Blush theme" data-profile-theme="berry" type="button">
+<span class="theme-swatch swatch-berry"></span><span>Berry Blush</span>
+</button>
+<button aria-label="Choose Lavender League theme" data-profile-theme="lavender" type="button">
+<span class="theme-swatch swatch-lavender"></span><span>Lavender League</span>
+</button>
+<button aria-label="Choose Golden Streak theme" data-profile-theme="sunshine" type="button">
+<span class="theme-swatch swatch-sunshine"></span><span>Golden Streak</span>
+</button>
+<button aria-label="Choose Ocean Lesson theme" data-profile-theme="ocean" type="button">
+<span class="theme-swatch swatch-ocean"></span><span>Ocean Lesson</span>
+</button>
+<button aria-label="Choose Coral Combo theme" data-profile-theme="coral" type="button">
+<span class="theme-swatch swatch-coral"></span><span>Coral Combo</span>
+</button>
+<button aria-label="Choose Mint Garden theme" data-profile-theme="mint" type="button">
+<span class="theme-swatch swatch-mint"></span><span>Mint Garden</span>
+</button>
+<button aria-label="Choose Blueberry League theme" data-profile-theme="blueberry" type="button">
+<span class="theme-swatch swatch-blueberry"></span><span>Blueberry League</span>
+</button>
+<button aria-label="Choose Peach Practice theme" data-profile-theme="peach" type="button">
+<span class="theme-swatch swatch-peach"></span><span>Peach Practice</span>
+</button>
+<button aria-label="Choose Rose Champion theme" data-profile-theme="rose" type="button">
+<span class="theme-swatch swatch-rose"></span><span>Rose Champion</span>
+</button>
+</div>
+</fieldset>
+</div>
+</div>
+<div class="profile-form-actions">
+<button class="button button-primary" type="submit">Save Profile</button>
+<button class="button button-secondary" id="reset-profile" type="button">Reset Profile</button>
+</div>
+</form>
+</section>
+</main>
+<dialog class="path-lesson-dialog" id="path-lesson-dialog">
+<div class="path-dialog-header">
+<div>
+<p class="section-label" id="path-lesson-unit">Unit lesson</p>
+<h2 id="path-lesson-title">History lesson</h2>
+<p id="path-lesson-difficulty">Standard difficulty</p>
+</div>
+<button aria-label="Close lesson" class="dialog-close" id="close-path-lesson" type="button">
+      ×
+    </button>
+</div>
+<div id="path-lesson-game">
+<div class="path-lesson-hud">
+<span id="path-lesson-hearts">❤️ ❤️ ❤️</span>
+<span id="path-lesson-progress-copy">Question 1 of 5</span>
+</div>
+<div class="mini-progress">
+<div id="path-lesson-progress-fill"></div>
+</div>
+<article class="question-card path-question-card">
+<p class="question-type" id="path-question-type">Definition → term</p>
+<h2 id="path-question"></h2>
+<div class="option-grid" id="path-options"></div>
+<p aria-live="polite" class="feedback" id="path-feedback" role="status"></p>
+</article>
+<button class="button button-primary next-button" hidden="" id="path-next-question" type="button">
+      Next question
+    </button>
+</div>
+<section class="path-results" hidden="" id="path-lesson-results"></section>
+</dialog><dialog class="sources-dialog" id="sources-dialog">
+<div class="dialog-heading">
+<div>
+<p class="section-label">Study-note references</p>
+<h2>Sources used to check the summaries</h2>
+</div>
+<button aria-label="Close sources" class="dialog-close" id="close-sources" type="button">
         ×
       </button>
-    </div>
-
-    <p>
+</div>
+<p>
       The professor's image supplied the term list. The short summaries were independently
       written and checked against educational and public-history sources.
     </p>
-
-    <ul>
-      <li><a href="https://openstax.org/books/us-history/pages/1-1-the-americas" target="_blank" rel="noopener noreferrer">OpenStax: The Americas</a></li>
-      <li><a href="https://openstax.org/books/us-history/pages/2-4-new-worlds-in-the-americas-labor-commerce-and-the-columbian-exchange" target="_blank" rel="noopener noreferrer">OpenStax: Labor, Commerce, and the Columbian Exchange</a></li>
-      <li><a href="https://openstax.org/books/us-history/pages/3-3-english-settlements-in-america" target="_blank" rel="noopener noreferrer">OpenStax: English Settlements in America</a></li>
-      <li><a href="https://openstax.org/books/us-history/pages/4-4-great-awakening-and-enlightenment" target="_blank" rel="noopener noreferrer">OpenStax: Great Awakening and Enlightenment</a></li>
-      <li><a href="https://openstax.org/books/us-history/pages/5-1-confronting-the-national-debt-the-aftermath-of-the-french-and-indian-war" target="_blank" rel="noopener noreferrer">OpenStax: Aftermath of the French and Indian War</a></li>
-      <li><a href="https://www.loc.gov/exhibitions/two-georges/about-this-exhibition/president-and-king/the-international-slave-trade/olaudah-equianos-petition-to-queen-charlotte/" target="_blank" rel="noopener noreferrer">Library of Congress: Olaudah Equiano</a></li>
-      <li><a href="https://www.nps.gov/articles/hohokam-culture.htm" target="_blank" rel="noopener noreferrer">National Park Service: Hohokam Culture</a></li>
-      <li><a href="https://global.si.edu/projects/caribbean-indigenous-legacies-project" target="_blank" rel="noopener noreferrer">Smithsonian: Caribbean Indigenous Legacies</a></li>
-    </ul>
-  </dialog>
-
-  <div class="celebration-layer" id="celebration-layer" aria-hidden="true"></div>
-
-  <aside
-    class="badge-toast"
-    id="badge-toast"
-    role="status"
-    aria-live="polite"
-    hidden
-  >
-    <span class="badge-toast-icon" id="badge-toast-icon">🏆</span>
-
-    <span>
-      <strong>Badge earned!</strong>
-      <span id="badge-toast-name">New badge</span>
-    </span>
-  </aside>
-
-  <footer>
-    <p>Designed for Danielle's HIST 1301 Exam 1 study · Berry Vibes Studio 🍓</p>
-    <button id="open-sources" type="button">View study-note sources</button>
-  </footer>
+<ul>
+<li><a href="https://openstax.org/books/us-history/pages/1-1-the-americas" rel="noopener noreferrer" target="_blank">OpenStax: The Americas</a></li>
+<li><a href="https://openstax.org/books/us-history/pages/2-4-new-worlds-in-the-americas-labor-commerce-and-the-columbian-exchange" rel="noopener noreferrer" target="_blank">OpenStax: Labor, Commerce, and the Columbian Exchange</a></li>
+<li><a href="https://openstax.org/books/us-history/pages/3-3-english-settlements-in-america" rel="noopener noreferrer" target="_blank">OpenStax: English Settlements in America</a></li>
+<li><a href="https://openstax.org/books/us-history/pages/4-4-great-awakening-and-enlightenment" rel="noopener noreferrer" target="_blank">OpenStax: Great Awakening and Enlightenment</a></li>
+<li><a href="https://openstax.org/books/us-history/pages/5-1-confronting-the-national-debt-the-aftermath-of-the-french-and-indian-war" rel="noopener noreferrer" target="_blank">OpenStax: Aftermath of the French and Indian War</a></li>
+<li><a href="https://www.loc.gov/exhibitions/two-georges/about-this-exhibition/president-and-king/the-international-slave-trade/olaudah-equianos-petition-to-queen-charlotte/" rel="noopener noreferrer" target="_blank">Library of Congress: Olaudah Equiano</a></li>
+<li><a href="https://www.nps.gov/articles/hohokam-culture.htm" rel="noopener noreferrer" target="_blank">National Park Service: Hohokam Culture</a></li>
+<li><a href="https://global.si.edu/projects/caribbean-indigenous-legacies-project" rel="noopener noreferrer" target="_blank">Smithsonian: Caribbean Indigenous Legacies</a></li>
+</ul>
+</dialog>
+<div aria-hidden="true" class="celebration-layer" id="celebration-layer"></div>
+<aside aria-live="polite" class="badge-toast" hidden="" id="badge-toast" role="status">
+<span class="badge-toast-icon" id="badge-toast-icon">🏆</span>
+<span>
+<strong>Badge earned!</strong>
+<span id="badge-toast-name">New badge</span>
+</span>
+</aside>
+<nav aria-label="Mobile navigation" class="mobile-bottom-nav">
+<button data-view-link="home" type="button">
+<span aria-hidden="true">🏠</span><small>Path</small>
+</button>
+<button data-view-link="study" type="button">
+<span aria-hidden="true">📚</span><small>Study</small>
+</button>
+<button data-view-link="battle" type="button">
+<span aria-hidden="true">⚔️</span><small>Battle</small>
+</button>
+<button data-view-link="match" type="button">
+<span aria-hidden="true">🧩</span><small>Match</small>
+</button>
+<button data-view-link="profile" type="button">
+<span aria-hidden="true">👤</span><small>Profile</small>
+</button>
+</nav><footer>
+<p>Designed for Danielle's HIST 1301 Exam 1 study · Berry Vibes Studio 🍓</p>
+<button id="open-sources" type="button">View study-note sources</button>
+</footer>
 </body>
 </html>
+
