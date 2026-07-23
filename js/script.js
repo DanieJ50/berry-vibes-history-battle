@@ -245,7 +245,7 @@ const defaultProfile = {
   icon: "🍓",
   bio: "Ready to master every HIST 1301 key term.",
   photo: "",
-  theme: "berry"
+  theme: "duo"
 };
 
 const defaultStudyStats = {
@@ -253,7 +253,8 @@ const defaultStudyStats = {
   battlesCompleted: 0,
   battlesWon: 0,
   puzzlesCompleted: 0,
-  examsCompleted: 0
+  examsCompleted: 0,
+  activityDays: []
 };
 
 const badgeDefinitions = [
@@ -334,6 +335,10 @@ studyStats.flippedTerms = Array.isArray(studyStats.flippedTerms)
   ? [...new Set(studyStats.flippedTerms)]
   : [];
 
+studyStats.activityDays = Array.isArray(studyStats.activityDays)
+  ? [...new Set(studyStats.activityDays)]
+  : [];
+
 let earnedBadges = readLocalJson("berryHistoryBadges", {});
 
 let badgeToastQueue = [];
@@ -369,6 +374,7 @@ function saveProgress() {
 
 function markMastered(termName) {
   masteredTerms.add(termName);
+  if (typeof recordStudyActivity === "function") recordStudyActivity();
   saveProgress();
   updateDashboard();
 
@@ -833,6 +839,7 @@ function finishBattle() {
     battleLives > 0;
 
   studyStats.battlesCompleted += 1;
+  recordStudyActivity();
   awardBadge("battle-finisher");
 
   if (won) {
@@ -1019,6 +1026,7 @@ function tryMatch(termName, definitionElement) {
 
     if (matchedNames.size === 6) {
       studyStats.puzzlesCompleted += 1;
+      recordStudyActivity();
       saveStudyStats();
       awardBadge("puzzle-solver");
       renderProfilePage();
@@ -1212,6 +1220,7 @@ function finishExam(timeExpired) {
     examAnswers.filter((answer) => answer.correct).length;
 
   studyStats.examsCompleted += 1;
+  recordStudyActivity();
   saveStudyStats();
   awardBadge("exam-finisher");
 
@@ -1225,6 +1234,7 @@ function finishExam(timeExpired) {
     bestScore = score;
     saveProgress();
     updateDashboard();
+    renderProfilePage();
   }
 
   examActive.hidden = true;
@@ -1294,8 +1304,7 @@ const profileNameInput = document.querySelector("#profile-name-input");
 const profileBioInput = document.querySelector("#profile-bio-input");
 const bioCharacterCount = document.querySelector("#bio-character-count");
 const profilePhotoInput = document.querySelector("#profile-photo-input");
-const removeProfilePhotoButton =
-  document.querySelector("#remove-profile-photo");
+const removeProfilePhotoButton = document.querySelector("#remove-profile-photo");
 const resetProfileButton = document.querySelector("#reset-profile");
 const profileSaveState = document.querySelector("#profile-save-state");
 
@@ -1303,33 +1312,31 @@ const navProfilePhoto = document.querySelector("#nav-profile-photo");
 const navProfileIcon = document.querySelector("#nav-profile-icon");
 const navProfileName = document.querySelector("#nav-profile-name");
 
-const profilePhotoPreview =
-  document.querySelector("#profile-photo-preview");
-const profileIconPreview =
-  document.querySelector("#profile-icon-preview");
-const profileNamePreview =
-  document.querySelector("#profile-name-preview");
-const profileBioPreview =
-  document.querySelector("#profile-bio-preview");
-const profileRibbonIcon =
-  document.querySelector("#profile-ribbon-icon");
+const profilePhotoPreview = document.querySelector("#profile-photo-preview");
+const profileIconPreview = document.querySelector("#profile-icon-preview");
+const profileNamePreview = document.querySelector("#profile-name-preview");
+const profileBioPreview = document.querySelector("#profile-bio-preview");
+const profileRibbonIcon = document.querySelector("#profile-ribbon-icon");
 
-const profileMasteredStat =
-  document.querySelector("#profile-mastered-stat");
-const profileExamStat =
-  document.querySelector("#profile-exam-stat");
-const profileCardStat =
-  document.querySelector("#profile-card-stat");
-const profileBadgeStat =
-  document.querySelector("#profile-badge-stat");
-const profileMasteryPercent =
-  document.querySelector("#profile-mastery-percent");
-const profileBadgePercent =
-  document.querySelector("#profile-badge-percent");
-const profileMasteryFill =
-  document.querySelector("#profile-mastery-fill");
-const profileBadgeFill =
-  document.querySelector("#profile-badge-fill");
+const profileLevelStat = document.querySelector("#profile-level-stat");
+const profileLevelMedal = document.querySelector("#profile-level-medal");
+const profileLevelMessage = document.querySelector("#profile-level-message");
+const profileXpStat = document.querySelector("#profile-xp-stat");
+const profileXpQuickStat = document.querySelector("#profile-xp-quick-stat");
+const profileNextLevelText = document.querySelector("#profile-next-level-text");
+const profileNextLevelFill = document.querySelector("#profile-next-level-fill");
+const profileStreakStat = document.querySelector("#profile-streak-stat");
+
+const profileMasteredStat = document.querySelector("#profile-mastered-stat");
+const profileExamStat = document.querySelector("#profile-exam-stat");
+const profileCardStat = document.querySelector("#profile-card-stat");
+const profileBadgeStat = document.querySelector("#profile-badge-stat");
+const profileBattleStat = document.querySelector("#profile-battle-stat");
+const profilePuzzleStat = document.querySelector("#profile-puzzle-stat");
+const profileMasteryPercent = document.querySelector("#profile-mastery-percent");
+const profileBadgePercent = document.querySelector("#profile-badge-percent");
+const profileMasteryFill = document.querySelector("#profile-mastery-fill");
+const profileBadgeFill = document.querySelector("#profile-badge-fill");
 const badgeGrid = document.querySelector("#badge-grid");
 
 const badgeToast = document.querySelector("#badge-toast");
@@ -1338,10 +1345,7 @@ const badgeToastName = document.querySelector("#badge-toast-name");
 
 function saveStudyStats() {
   try {
-    localStorage.setItem(
-      "berryHistoryStats",
-      JSON.stringify(studyStats)
-    );
+    localStorage.setItem("berryHistoryStats", JSON.stringify(studyStats));
   } catch (error) {
     console.warn("Could not save study task statistics.", error);
   }
@@ -1349,10 +1353,7 @@ function saveStudyStats() {
 
 function saveBadgeState() {
   try {
-    localStorage.setItem(
-      "berryHistoryBadges",
-      JSON.stringify(earnedBadges)
-    );
+    localStorage.setItem("berryHistoryBadges", JSON.stringify(earnedBadges));
   } catch (error) {
     console.warn("Could not save badges.", error);
   }
@@ -1360,30 +1361,109 @@ function saveBadgeState() {
 
 function saveProfileState() {
   try {
-    localStorage.setItem(
-      "berryHistoryProfile",
-      JSON.stringify(userProfile)
-    );
-
-    profileSaveState.textContent =
-      "Profile saved successfully!";
+    localStorage.setItem("berryHistoryProfile", JSON.stringify(userProfile));
+    profileSaveState.textContent = "Profile saved successfully!";
     profileSaveState.className = "save-state saved";
   } catch (error) {
     console.error("Could not save profile.", error);
-
-    profileSaveState.textContent =
-      "The profile could not be saved. Try a smaller picture.";
+    profileSaveState.textContent = "The profile could not be saved. Try a smaller picture.";
     profileSaveState.className = "save-state error";
   }
+}
+
+function getLocalDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function recordStudyActivity() {
+  const today = getLocalDateKey();
+  if (!studyStats.activityDays.includes(today)) {
+    studyStats.activityDays.push(today);
+    studyStats.activityDays = studyStats.activityDays.slice(-400);
+    saveStudyStats();
+  }
+}
+
+function calculateStudyStreak() {
+  const days = new Set(studyStats.activityDays);
+  if (!days.size) return 0;
+
+  const cursor = new Date();
+  const todayKey = getLocalDateKey(cursor);
+
+  if (!days.has(todayKey)) {
+    cursor.setDate(cursor.getDate() - 1);
+    if (!days.has(getLocalDateKey(cursor))) return 0;
+  }
+
+  let streak = 0;
+  while (days.has(getLocalDateKey(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  return streak;
+}
+
+function calculateXp() {
+  const earnedAmount = Object.keys(earnedBadges).length;
+  return (
+    studyStats.flippedTerms.length * 3 +
+    masteredTerms.size * 10 +
+    studyStats.battlesCompleted * 25 +
+    studyStats.battlesWon * 35 +
+    studyStats.puzzlesCompleted * 30 +
+    studyStats.examsCompleted * 60 +
+    earnedAmount * 40
+  );
+}
+
+function getLevelData() {
+  const xp = calculateXp();
+  const levelSize = 250;
+  const level = Math.floor(xp / levelSize) + 1;
+  const levelStart = (level - 1) * levelSize;
+  const levelProgress = xp - levelStart;
+  const toNext = levelSize - levelProgress;
+
+  return {
+    xp,
+    level,
+    toNext,
+    progressPercent: Math.round((levelProgress / levelSize) * 100)
+  };
 }
 
 function getBadgeDefinition(badgeId) {
   return badgeDefinitions.find((badge) => badge.id === badgeId);
 }
 
+function getBadgeProgress(badgeId) {
+  const map = {
+    "deck-explorer": [studyStats.flippedTerms.length, 10, "cards"],
+    "deck-scholar": [studyStats.flippedTerms.length, 30, "cards"],
+    "battle-finisher": [studyStats.battlesCompleted, 1, "battle"],
+    "beast-defeater": [studyStats.battlesWon, 1, "win"],
+    "puzzle-solver": [studyStats.puzzlesCompleted, 1, "puzzle"],
+    "exam-finisher": [studyStats.examsCompleted, 1, "exam"],
+    "exam-ace": [Math.min(bestScore, 20), 20, "points"],
+    "master-historian": [masteredTerms.size, 30, "terms"]
+  };
+
+  const [current, target, unit] = map[badgeId] || [0, 1, "task"];
+  return {
+    current,
+    target,
+    unit,
+    percent: Math.min(100, Math.round((current / target) * 100))
+  };
+}
+
 function awardBadge(badgeId, options = {}) {
   const badge = getBadgeDefinition(badgeId);
-
   if (!badge || earnedBadges[badgeId]) return false;
 
   earnedBadges[badgeId] = new Date().toISOString();
@@ -1404,7 +1484,6 @@ function processBadgeToastQueue() {
 
   badgeToastActive = true;
   const badge = badgeToastQueue.shift();
-
   badgeToastIcon.textContent = badge.icon;
   badgeToastName.textContent = badge.name;
   badgeToast.hidden = false;
@@ -1417,75 +1496,42 @@ function processBadgeToastQueue() {
 }
 
 function recordStudyCardFlip(termName) {
+  recordStudyActivity();
+
   if (!studyStats.flippedTerms.includes(termName)) {
     studyStats.flippedTerms.push(termName);
     saveStudyStats();
 
-    if (studyStats.flippedTerms.length >= 10) {
-      awardBadge("deck-explorer");
-    }
-
-    if (studyStats.flippedTerms.length >= 30) {
-      awardBadge("deck-scholar");
-    }
+    if (studyStats.flippedTerms.length >= 10) awardBadge("deck-explorer");
+    if (studyStats.flippedTerms.length >= 30) awardBadge("deck-scholar");
 
     renderProfilePage();
   }
 }
 
 function reconcileCompletedTasks() {
-  if (studyStats.flippedTerms.length >= 10) {
-    awardBadge("deck-explorer", { silent: true });
-  }
-
-  if (studyStats.flippedTerms.length >= 30) {
-    awardBadge("deck-scholar", { silent: true });
-  }
-
-  if (studyStats.battlesCompleted >= 1) {
-    awardBadge("battle-finisher", { silent: true });
-  }
-
-  if (studyStats.battlesWon >= 1) {
-    awardBadge("beast-defeater", { silent: true });
-  }
-
-  if (studyStats.puzzlesCompleted >= 1) {
-    awardBadge("puzzle-solver", { silent: true });
-  }
-
-  if (studyStats.examsCompleted >= 1 || bestScore > 0) {
-    awardBadge("exam-finisher", { silent: true });
-  }
-
-  if (bestScore >= 20) {
-    awardBadge("exam-ace", { silent: true });
-  }
-
-  if (masteredTerms.size >= 30) {
-    awardBadge("master-historian", { silent: true });
-  }
+  if (studyStats.flippedTerms.length >= 10) awardBadge("deck-explorer", { silent: true });
+  if (studyStats.flippedTerms.length >= 30) awardBadge("deck-scholar", { silent: true });
+  if (studyStats.battlesCompleted >= 1) awardBadge("battle-finisher", { silent: true });
+  if (studyStats.battlesWon >= 1) awardBadge("beast-defeater", { silent: true });
+  if (studyStats.puzzlesCompleted >= 1) awardBadge("puzzle-solver", { silent: true });
+  if (studyStats.examsCompleted >= 1 || bestScore > 0) awardBadge("exam-finisher", { silent: true });
+  if (bestScore >= 20) awardBadge("exam-ace", { silent: true });
+  if (masteredTerms.size >= 30) awardBadge("master-historian", { silent: true });
 }
 
 function applyProfileTheme() {
   const validThemes = [
-    "berry",
-    "lavender",
-    "sunshine",
-    "mint",
-    "blueberry"
+    "duo", "berry", "lavender", "sunshine", "ocean",
+    "coral", "mint", "blueberry", "peach", "rose"
   ];
 
-  if (!validThemes.includes(userProfile.theme)) {
-    userProfile.theme = "berry";
-  }
-
+  if (!validThemes.includes(userProfile.theme)) userProfile.theme = "duo";
   document.body.dataset.profileTheme = userProfile.theme;
 }
 
 function setAvatarDisplay(photoElement, iconElement, photoValue, iconValue) {
   const hasPhoto = Boolean(photoValue);
-
   photoElement.hidden = !hasPhoto;
   iconElement.hidden = hasPhoto;
 
@@ -1498,18 +1544,9 @@ function setAvatarDisplay(photoElement, iconElement, photoValue, iconValue) {
 }
 
 function updateProfilePreviewFromInputs() {
-  const draftName =
-    profileNameInput.value.trim() ||
-    "History Hero";
-
-  const draftBio =
-    profileBioInput.value.trim() ||
-    "Ready to master every HIST 1301 key term.";
-
-  profileNamePreview.textContent = draftName;
-  profileBioPreview.textContent = draftBio;
-  bioCharacterCount.textContent =
-    String(profileBioInput.value.length);
+  profileNamePreview.textContent = profileNameInput.value.trim() || "History Hero";
+  profileBioPreview.textContent = profileBioInput.value.trim() || "Ready to master every HIST 1301 key term.";
+  bioCharacterCount.textContent = String(profileBioInput.value.length);
 }
 
 function renderProfilePage() {
@@ -1517,86 +1554,57 @@ function renderProfilePage() {
 
   profileNameInput.value = userProfile.name;
   profileBioInput.value = userProfile.bio;
-  bioCharacterCount.textContent =
-    String(userProfile.bio.length);
-
-  profileNamePreview.textContent =
-    userProfile.name || "History Hero";
-
-  profileBioPreview.textContent =
-    userProfile.bio ||
-    "Ready to master every HIST 1301 key term.";
-
+  bioCharacterCount.textContent = String(userProfile.bio.length);
+  profileNamePreview.textContent = userProfile.name || "History Hero";
+  profileBioPreview.textContent = userProfile.bio || "Ready to master every HIST 1301 key term.";
   profileRibbonIcon.textContent = userProfile.icon;
   navProfileName.textContent = userProfile.name || "Profile";
 
-  setAvatarDisplay(
-    profilePhotoPreview,
-    profileIconPreview,
-    pendingProfilePhoto,
-    userProfile.icon
-  );
+  setAvatarDisplay(profilePhotoPreview, profileIconPreview, pendingProfilePhoto, userProfile.icon);
+  setAvatarDisplay(navProfilePhoto, navProfileIcon, userProfile.photo, userProfile.icon);
 
-  setAvatarDisplay(
-    navProfilePhoto,
-    navProfileIcon,
-    userProfile.photo,
-    userProfile.icon
-  );
+  document.querySelectorAll("[data-profile-icon]").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.profileIcon === userProfile.icon);
+  });
 
-  document
-    .querySelectorAll("[data-profile-icon]")
-    .forEach((button) => {
-      button.classList.toggle(
-        "selected",
-        button.dataset.profileIcon === userProfile.icon
-      );
-    });
-
-  document
-    .querySelectorAll("[data-profile-theme]")
-    .forEach((button) => {
-      button.classList.toggle(
-        "selected",
-        button.dataset.profileTheme === userProfile.theme
-      );
-    });
+  document.querySelectorAll("[data-profile-theme]").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.profileTheme === userProfile.theme);
+  });
 
   removeProfilePhotoButton.disabled = !pendingProfilePhoto;
 
   const masteredAmount = masteredTerms.size;
   const flippedAmount = studyStats.flippedTerms.length;
   const earnedAmount = Object.keys(earnedBadges).length;
-  const masteryPercentage =
-    Math.round((masteredAmount / historyTerms.length) * 100);
-  const badgePercentage =
-    Math.round((earnedAmount / badgeDefinitions.length) * 100);
+  const masteryPercentage = Math.round((masteredAmount / historyTerms.length) * 100);
+  const badgePercentage = Math.round((earnedAmount / badgeDefinitions.length) * 100);
+  const streak = calculateStudyStreak();
+  const levelData = getLevelData();
 
-  profileMasteredStat.textContent =
-    `${masteredAmount} / ${historyTerms.length}`;
+  profileLevelStat.textContent = String(levelData.level);
+  profileLevelMedal.textContent = String(levelData.level);
+  profileXpStat.textContent = `${levelData.xp} XP`;
+  profileXpQuickStat.textContent = `${levelData.xp} XP`;
+  profileNextLevelText.textContent = `${levelData.toNext} XP to Level ${levelData.level + 1}`;
+  profileNextLevelFill.style.width = `${levelData.progressPercent}%`;
+  profileStreakStat.textContent = `${streak} day${streak === 1 ? "" : "s"}`;
 
-  profileExamStat.textContent =
-    bestScore > 0
-      ? `${bestScore} / 25`
-      : "No attempt";
+  profileLevelMessage.textContent = levelData.xp === 0
+    ? "Start studying to earn your first XP."
+    : levelData.level >= 5
+      ? "Your history skills are seriously leveling up."
+      : "Complete lessons and tasks to climb to the next level.";
 
-  profileCardStat.textContent =
-    `${flippedAmount} / ${historyTerms.length}`;
-
-  profileBadgeStat.textContent =
-    `${earnedAmount} / ${badgeDefinitions.length}`;
-
-  profileMasteryPercent.textContent =
-    `${masteryPercentage}%`;
-
-  profileBadgePercent.textContent =
-    `${badgePercentage}%`;
-
-  profileMasteryFill.style.width =
-    `${masteryPercentage}%`;
-
-  profileBadgeFill.style.width =
-    `${badgePercentage}%`;
+  profileMasteredStat.textContent = `${masteredAmount} / ${historyTerms.length}`;
+  profileExamStat.textContent = bestScore > 0 ? `${bestScore} / 25` : "No attempt";
+  profileCardStat.textContent = `${flippedAmount} / ${historyTerms.length}`;
+  profileBadgeStat.textContent = `${earnedAmount} / ${badgeDefinitions.length}`;
+  profileBattleStat.textContent = String(studyStats.battlesCompleted);
+  profilePuzzleStat.textContent = String(studyStats.puzzlesCompleted);
+  profileMasteryPercent.textContent = `${masteryPercentage}%`;
+  profileBadgePercent.textContent = `${badgePercentage}%`;
+  profileMasteryFill.style.width = `${masteryPercentage}%`;
+  profileBadgeFill.style.width = `${badgePercentage}%`;
 
   renderBadgeGrid();
 }
@@ -1606,27 +1614,26 @@ function renderBadgeGrid() {
 
   badgeDefinitions.forEach((badge) => {
     const earnedDate = earnedBadges[badge.id];
+    const progress = getBadgeProgress(badge.id);
     const card = document.createElement("article");
-
     card.className = "badge-card";
     card.classList.toggle("earned", Boolean(earnedDate));
 
-    const formattedDate = earnedDate
-      ? new Date(earnedDate).toLocaleDateString()
-      : "";
+    const formattedDate = earnedDate ? new Date(earnedDate).toLocaleDateString() : "";
 
     card.innerHTML = `
       <span class="badge-card-icon" aria-hidden="true">${badge.icon}</span>
       <h3>${badge.name}</h3>
       <p>${badge.task}</p>
-      <span class="badge-state">
-        ${earnedDate ? "Earned" : "Locked"}
-      </span>
-      ${
-        earnedDate
-          ? `<span class="badge-earned-date">Earned ${formattedDate}</span>`
-          : ""
-      }
+      <div class="badge-progress-copy">
+        <span>${Math.min(progress.current, progress.target)} / ${progress.target} ${progress.unit}</span>
+        <span>${progress.percent}%</span>
+      </div>
+      <div class="badge-progress-track" aria-hidden="true">
+        <div style="width: ${progress.percent}%"></div>
+      </div>
+      <span class="badge-state">${earnedDate ? "Earned" : "Locked"}</span>
+      ${earnedDate ? `<span class="badge-earned-date">Earned ${formattedDate}</span>` : ""}
     `;
 
     badgeGrid.appendChild(card);
@@ -1646,49 +1653,24 @@ function resizeProfileImage(file) {
     }
 
     const reader = new FileReader();
-
-    reader.onerror = () => {
-      reject(new Error("The picture could not be read."));
-    };
+    reader.onerror = () => reject(new Error("The picture could not be read."));
 
     reader.onload = () => {
       const image = new Image();
-
-      image.onerror = () => {
-        reject(new Error("The picture could not be opened."));
-      };
+      image.onerror = () => reject(new Error("The picture could not be opened."));
 
       image.onload = () => {
         const size = 360;
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
-
         canvas.width = size;
         canvas.height = size;
 
-        const cropSize = Math.min(
-          image.naturalWidth,
-          image.naturalHeight
-        );
+        const cropSize = Math.min(image.naturalWidth, image.naturalHeight);
+        const sourceX = (image.naturalWidth - cropSize) / 2;
+        const sourceY = (image.naturalHeight - cropSize) / 2;
 
-        const sourceX =
-          (image.naturalWidth - cropSize) / 2;
-
-        const sourceY =
-          (image.naturalHeight - cropSize) / 2;
-
-        context.drawImage(
-          image,
-          sourceX,
-          sourceY,
-          cropSize,
-          cropSize,
-          0,
-          0,
-          size,
-          size
-        );
-
+        context.drawImage(image, sourceX, sourceY, cropSize, cropSize, 0, 0, size, size);
         resolve(canvas.toDataURL("image/jpeg", .82));
       };
 
@@ -1699,81 +1681,47 @@ function resizeProfileImage(file) {
   });
 }
 
-profileNameInput.addEventListener(
-  "input",
-  updateProfilePreviewFromInputs
-);
+profileNameInput.addEventListener("input", updateProfilePreviewFromInputs);
+profileBioInput.addEventListener("input", updateProfilePreviewFromInputs);
 
-profileBioInput.addEventListener(
-  "input",
-  updateProfilePreviewFromInputs
-);
+document.querySelectorAll("[data-profile-icon]").forEach((button) => {
+  button.addEventListener("click", () => {
+    userProfile.icon = button.dataset.profileIcon;
+    profileIconPreview.textContent = userProfile.icon;
+    profileRibbonIcon.textContent = userProfile.icon;
 
-document
-  .querySelectorAll("[data-profile-icon]")
-  .forEach((button) => {
-    button.addEventListener("click", () => {
-      userProfile.icon = button.dataset.profileIcon;
-      profileIconPreview.textContent = userProfile.icon;
-      profileRibbonIcon.textContent = userProfile.icon;
-
-      document
-        .querySelectorAll("[data-profile-icon]")
-        .forEach((iconButton) => {
-          iconButton.classList.toggle(
-            "selected",
-            iconButton === button
-          );
-        });
+    document.querySelectorAll("[data-profile-icon]").forEach((iconButton) => {
+      iconButton.classList.toggle("selected", iconButton === button);
     });
   });
+});
 
-document
-  .querySelectorAll("[data-profile-theme]")
-  .forEach((button) => {
-    button.addEventListener("click", () => {
-      userProfile.theme = button.dataset.profileTheme;
-      applyProfileTheme();
+document.querySelectorAll("[data-profile-theme]").forEach((button) => {
+  button.addEventListener("click", () => {
+    userProfile.theme = button.dataset.profileTheme;
+    applyProfileTheme();
 
-      document
-        .querySelectorAll("[data-profile-theme]")
-        .forEach((themeButton) => {
-          themeButton.classList.toggle(
-            "selected",
-            themeButton === button
-          );
-        });
-
-      profileSaveState.textContent =
-        "Background previewed. Save Profile to keep it.";
-      profileSaveState.className = "save-state";
+    document.querySelectorAll("[data-profile-theme]").forEach((themeButton) => {
+      themeButton.classList.toggle("selected", themeButton === button);
     });
+
+    profileSaveState.textContent = "Full app color theme previewed. Save Profile to keep it.";
+    profileSaveState.className = "save-state";
   });
+});
 
 profilePhotoInput.addEventListener("change", async () => {
   const [file] = profilePhotoInput.files;
-
   if (!file) return;
 
-  profileSaveState.textContent =
-    "Preparing profile picture…";
+  profileSaveState.textContent = "Preparing profile picture…";
   profileSaveState.className = "save-state";
 
   try {
-    pendingProfilePhoto =
-      await resizeProfileImage(file);
-
-    setAvatarDisplay(
-      profilePhotoPreview,
-      profileIconPreview,
-      pendingProfilePhoto,
-      userProfile.icon
-    );
-
+    pendingProfilePhoto = await resizeProfileImage(file);
+    setAvatarDisplay(profilePhotoPreview, profileIconPreview, pendingProfilePhoto, userProfile.icon);
     removeProfilePhotoButton.disabled = false;
-
-    profileSaveState.textContent =
-      "Picture ready. Save Profile to keep it.";
+    profileSaveState.textContent = "Picture ready. Save Profile to keep it.";
   } catch (error) {
     profileSaveState.textContent = error.message;
     profileSaveState.className = "save-state error";
@@ -1784,31 +1732,16 @@ profilePhotoInput.addEventListener("change", async () => {
 
 removeProfilePhotoButton.addEventListener("click", () => {
   pendingProfilePhoto = "";
-
-  setAvatarDisplay(
-    profilePhotoPreview,
-    profileIconPreview,
-    pendingProfilePhoto,
-    userProfile.icon
-  );
-
+  setAvatarDisplay(profilePhotoPreview, profileIconPreview, pendingProfilePhoto, userProfile.icon);
   removeProfilePhotoButton.disabled = true;
-  profileSaveState.textContent =
-    "Picture removed. Save Profile to keep the change.";
+  profileSaveState.textContent = "Picture removed. Save Profile to keep the change.";
   profileSaveState.className = "save-state";
 });
 
 profileForm.addEventListener("submit", (event) => {
   event.preventDefault();
-
-  userProfile.name =
-    profileNameInput.value.trim() ||
-    defaultProfile.name;
-
-  userProfile.bio =
-    profileBioInput.value.trim() ||
-    defaultProfile.bio;
-
+  userProfile.name = profileNameInput.value.trim() || defaultProfile.name;
+  userProfile.bio = profileBioInput.value.trim() || defaultProfile.bio;
   userProfile.photo = pendingProfilePhoto;
   saveProfileState();
   renderProfilePage();
@@ -1819,12 +1752,9 @@ resetProfileButton.addEventListener("click", () => {
   pendingProfilePhoto = "";
   saveProfileState();
   renderProfilePage();
-
-  profileSaveState.textContent =
-    "Profile reset to the Berry Vibes defaults.";
+  profileSaveState.textContent = "Profile reset to the Lime Quest defaults.";
   profileSaveState.className = "save-state saved";
 });
-
 
 /* ---------------- SOURCES ---------------- */
 
