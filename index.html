@@ -392,155 +392,26 @@
           <p class="eyebrow">Your personal study space</p>
           <h1>History Hero Profile</h1>
           <p>
-            Customize your name, icon, photo, bio, and app background.
-            Your progress and earned badges stay saved in this browser.
+            A bright, game-style profile hub for your identity, progress,
+            levels, themes, and task-earned achievements.
           </p>
         </div>
 
-        <div class="profile-hero-mini" aria-hidden="true">
-          👤🍓🏆
-        </div>
+        <div class="profile-hero-mini" aria-hidden="true">🔥🍓🏆</div>
       </div>
 
-      <section class="profile-layout">
-        <form class="profile-editor panel" id="profile-form">
-          <div class="profile-card-heading">
-            <div>
-              <p class="section-label">Edit profile</p>
-              <h2>Make the study app yours</h2>
-            </div>
-
-            <span class="save-state" id="profile-save-state" role="status" aria-live="polite">
-              Changes are saved when you press Save Profile.
-            </span>
+      <section class="duo-profile-layout">
+        <aside class="duo-profile-card panel" aria-labelledby="profile-preview-title">
+          <div class="profile-cover-art" aria-hidden="true">
+            <span>⭐</span><span>📚</span><span>🍓</span>
           </div>
-
-          <label class="profile-field" for="profile-name-input">
-            <span>Display name</span>
-
-            <input
-              id="profile-name-input"
-              type="text"
-              maxlength="30"
-              autocomplete="name"
-              placeholder="History Hero"
-            >
-          </label>
-
-          <label class="profile-field" for="profile-bio-input">
-            <span>Bio</span>
-
-            <textarea
-              id="profile-bio-input"
-              maxlength="180"
-              rows="4"
-              placeholder="Tell people what you are studying or what keeps you motivated."
-            ></textarea>
-
-            <small><span id="bio-character-count">0</span> / 180 characters</small>
-          </label>
-
-          <fieldset class="profile-fieldset">
-            <legend>Choose your profile icon</legend>
-
-            <div class="icon-picker" id="profile-icon-picker">
-              <button type="button" data-profile-icon="🍓" aria-label="Choose strawberry icon">🍓</button>
-              <button type="button" data-profile-icon="📚" aria-label="Choose books icon">📚</button>
-              <button type="button" data-profile-icon="⚔️" aria-label="Choose battle icon">⚔️</button>
-              <button type="button" data-profile-icon="🧩" aria-label="Choose puzzle icon">🧩</button>
-              <button type="button" data-profile-icon="🏛️" aria-label="Choose history building icon">🏛️</button>
-              <button type="button" data-profile-icon="🗺️" aria-label="Choose map icon">🗺️</button>
-              <button type="button" data-profile-icon="⭐" aria-label="Choose star icon">⭐</button>
-              <button type="button" data-profile-icon="👑" aria-label="Choose crown icon">👑</button>
-              <button type="button" data-profile-icon="🌸" aria-label="Choose flower icon">🌸</button>
-              <button type="button" data-profile-icon="🫐" aria-label="Choose blueberry icon">🫐</button>
-            </div>
-          </fieldset>
-
-          <fieldset class="profile-fieldset">
-            <legend>Profile picture</legend>
-
-            <div class="photo-controls">
-              <label class="upload-button" for="profile-photo-input">
-                Upload a picture
-              </label>
-
-              <input
-                id="profile-photo-input"
-                type="file"
-                accept="image/png,image/jpeg,image/webp,image/gif"
-                hidden
-              >
-
-              <button
-                class="button button-secondary compact-button"
-                id="remove-profile-photo"
-                type="button"
-              >
-                Remove picture
-              </button>
-            </div>
-
-            <p class="profile-help">
-              Images are resized before they are saved locally in your browser.
-            </p>
-          </fieldset>
-
-          <fieldset class="profile-fieldset">
-            <legend>Choose one of five background colors</legend>
-
-            <div class="theme-picker" id="profile-theme-picker">
-              <button type="button" data-profile-theme="berry" aria-label="Choose Berry Blush background">
-                <span class="theme-swatch swatch-berry"></span>
-                <span>Berry Blush</span>
-              </button>
-
-              <button type="button" data-profile-theme="lavender" aria-label="Choose Lavender Sky background">
-                <span class="theme-swatch swatch-lavender"></span>
-                <span>Lavender Sky</span>
-              </button>
-
-              <button type="button" data-profile-theme="sunshine" aria-label="Choose Sunshine Cream background">
-                <span class="theme-swatch swatch-sunshine"></span>
-                <span>Sunshine Cream</span>
-              </button>
-
-              <button type="button" data-profile-theme="mint" aria-label="Choose Mint Garden background">
-                <span class="theme-swatch swatch-mint"></span>
-                <span>Mint Garden</span>
-              </button>
-
-              <button type="button" data-profile-theme="blueberry" aria-label="Choose Blueberry Mist background">
-                <span class="theme-swatch swatch-blueberry"></span>
-                <span>Blueberry Mist</span>
-              </button>
-            </div>
-          </fieldset>
-
-          <div class="profile-form-actions">
-            <button class="button button-primary" type="submit">
-              Save Profile
-            </button>
-
-            <button
-              class="button button-secondary"
-              id="reset-profile"
-              type="button"
-            >
-              Reset Profile
-            </button>
-          </div>
-        </form>
-
-        <aside class="profile-preview panel" aria-labelledby="profile-preview-title">
-          <p class="section-label">Live preview</p>
-          <h2 id="profile-preview-title">Your player card</h2>
 
           <div class="profile-avatar-large">
             <img id="profile-photo-preview" alt="Profile preview" hidden>
             <span id="profile-icon-preview" aria-hidden="true">🍓</span>
           </div>
 
+          <h2 id="profile-preview-title" class="sr-only">Your player card</h2>
           <h3 id="profile-name-preview">History Hero</h3>
 
           <p id="profile-bio-preview">
@@ -551,82 +422,247 @@
             <span id="profile-ribbon-icon">🍓</span>
             <span>Berry Vibes History Player</span>
           </div>
+
+          <a class="button button-primary profile-edit-link" href="#profile-form">
+            Edit profile
+          </a>
         </aside>
-      </section>
 
-      <section class="profile-progress-panel panel" aria-labelledby="profile-progress-title">
-        <div class="profile-progress-heading">
-          <div>
-            <p class="section-label">Progress dashboard</p>
-            <h2 id="profile-progress-title">Your study progress</h2>
-          </div>
+        <div class="duo-profile-main">
+          <section class="duo-level-card panel" aria-labelledby="level-card-title">
+            <div class="level-badge" aria-hidden="true">
+              <span id="profile-level-medal">1</span>
+            </div>
 
-          <p>
-            Progress is collected from completed study activities—not from editing the profile.
-          </p>
-        </div>
+            <div class="level-copy">
+              <p class="section-label">Player level</p>
+              <h2 id="level-card-title">Level <span id="profile-level-stat">1</span></h2>
+              <p id="profile-level-message">Start studying to earn your first XP.</p>
 
-        <div class="profile-stat-grid">
-          <article class="profile-stat-card">
-            <span>Terms mastered</span>
-            <strong id="profile-mastered-stat">0 / 30</strong>
-          </article>
+              <div class="level-progress-row">
+                <div>
+                  <span id="profile-xp-stat">0 XP</span>
+                  <strong id="profile-next-level-text">250 XP to Level 2</strong>
+                </div>
 
-          <article class="profile-stat-card">
-            <span>Best exam score</span>
-            <strong id="profile-exam-stat">No attempt</strong>
-          </article>
+                <div class="level-progress-track">
+                  <div id="profile-next-level-fill"></div>
+                </div>
+              </div>
+            </div>
+          </section>
 
-          <article class="profile-stat-card">
-            <span>Study cards explored</span>
-            <strong id="profile-card-stat">0 / 30</strong>
-          </article>
+          <section class="duo-quick-stats panel" aria-label="Profile statistics">
+            <article class="duo-stat-tile streak-tile">
+              <span class="duo-stat-icon" aria-hidden="true">🔥</span>
+              <span>Study streak</span>
+              <strong id="profile-streak-stat">0 days</strong>
+            </article>
 
-          <article class="profile-stat-card">
-            <span>Badges earned</span>
-            <strong id="profile-badge-stat">0 / 8</strong>
-          </article>
-        </div>
+            <article class="duo-stat-tile xp-tile">
+              <span class="duo-stat-icon" aria-hidden="true">⚡</span>
+              <span>Total XP</span>
+              <strong id="profile-xp-quick-stat">0 XP</strong>
+            </article>
 
-        <div class="profile-progress-row">
-          <div>
-            <span>Term mastery</span>
-            <strong id="profile-mastery-percent">0%</strong>
-          </div>
+            <article class="duo-stat-tile mastery-tile">
+              <span class="duo-stat-icon" aria-hidden="true">🧠</span>
+              <span>Terms mastered</span>
+              <strong id="profile-mastered-stat">0 / 30</strong>
+            </article>
 
-          <div class="profile-progress-track">
-            <div id="profile-mastery-fill"></div>
-          </div>
-        </div>
+            <article class="duo-stat-tile league-tile">
+              <span class="duo-stat-icon" aria-hidden="true">🏆</span>
+              <span>Badges</span>
+              <strong id="profile-badge-stat">0 / 8</strong>
+            </article>
+          </section>
 
-        <div class="profile-progress-row">
-          <div>
-            <span>Badge collection</span>
-            <strong id="profile-badge-percent">0%</strong>
-          </div>
+          <section class="profile-progress-panel panel" aria-labelledby="profile-progress-title">
+            <div class="profile-progress-heading">
+              <div>
+                <p class="section-label">Learning progress</p>
+                <h2 id="profile-progress-title">Your history journey</h2>
+              </div>
 
-          <div class="profile-progress-track">
-            <div id="profile-badge-fill"></div>
-          </div>
+              <p>
+                These numbers only grow when you actually study or complete a game task.
+              </p>
+            </div>
+
+            <div class="profile-stat-grid">
+              <article class="profile-stat-card">
+                <span>Best exam</span>
+                <strong id="profile-exam-stat">No attempt</strong>
+              </article>
+
+              <article class="profile-stat-card">
+                <span>Cards explored</span>
+                <strong id="profile-card-stat">0 / 30</strong>
+              </article>
+
+              <article class="profile-stat-card">
+                <span>Battles completed</span>
+                <strong id="profile-battle-stat">0</strong>
+              </article>
+
+              <article class="profile-stat-card">
+                <span>Puzzles completed</span>
+                <strong id="profile-puzzle-stat">0</strong>
+              </article>
+            </div>
+
+            <div class="profile-progress-row">
+              <div>
+                <span>Term mastery</span>
+                <strong id="profile-mastery-percent">0%</strong>
+              </div>
+
+              <div class="profile-progress-track">
+                <div id="profile-mastery-fill"></div>
+              </div>
+            </div>
+
+            <div class="profile-progress-row">
+              <div>
+                <span>Achievement collection</span>
+                <strong id="profile-badge-percent">0%</strong>
+              </div>
+
+              <div class="profile-progress-track">
+                <div id="profile-badge-fill"></div>
+              </div>
+            </div>
+          </section>
         </div>
       </section>
 
       <section class="badge-section panel" aria-labelledby="badge-section-title">
         <div class="badge-section-heading">
           <div>
-            <p class="section-label">Task rewards</p>
-            <h2 id="badge-section-title">Earned badges</h2>
+            <p class="section-label">Achievements</p>
+            <h2 id="badge-section-title">Badge path</h2>
           </div>
 
           <p>
-            A badge unlocks only after its required study task is completed.
+            Every badge has a visible task meter. Editing your profile never unlocks one.
           </p>
         </div>
 
         <div class="badge-grid" id="badge-grid"></div>
       </section>
-    </section>
 
+      <form class="profile-editor panel" id="profile-form">
+        <div class="profile-card-heading">
+          <div>
+            <p class="section-label">Profile settings</p>
+            <h2>Edit your player identity</h2>
+          </div>
+
+          <span class="save-state" id="profile-save-state" role="status" aria-live="polite">
+            Changes are saved when you press Save Profile.
+          </span>
+        </div>
+
+        <div class="profile-editor-grid">
+          <div class="profile-editor-column">
+            <label class="profile-field" for="profile-name-input">
+              <span>Display name</span>
+              <input id="profile-name-input" type="text" maxlength="30" autocomplete="name" placeholder="History Hero">
+            </label>
+
+            <label class="profile-field" for="profile-bio-input">
+              <span>Bio</span>
+              <textarea id="profile-bio-input" maxlength="180" rows="4" placeholder="Tell people what you are studying or what keeps you motivated."></textarea>
+              <small><span id="bio-character-count">0</span> / 180 characters</small>
+            </label>
+
+            <fieldset class="profile-fieldset">
+              <legend>Choose your profile icon</legend>
+
+              <div class="icon-picker" id="profile-icon-picker">
+                <button type="button" data-profile-icon="🍓" aria-label="Choose strawberry icon">🍓</button>
+                <button type="button" data-profile-icon="📚" aria-label="Choose books icon">📚</button>
+                <button type="button" data-profile-icon="⚔️" aria-label="Choose battle icon">⚔️</button>
+                <button type="button" data-profile-icon="🧩" aria-label="Choose puzzle icon">🧩</button>
+                <button type="button" data-profile-icon="🏛️" aria-label="Choose history building icon">🏛️</button>
+                <button type="button" data-profile-icon="🗺️" aria-label="Choose map icon">🗺️</button>
+                <button type="button" data-profile-icon="⭐" aria-label="Choose star icon">⭐</button>
+                <button type="button" data-profile-icon="👑" aria-label="Choose crown icon">👑</button>
+                <button type="button" data-profile-icon="🌸" aria-label="Choose flower icon">🌸</button>
+                <button type="button" data-profile-icon="🫐" aria-label="Choose blueberry icon">🫐</button>
+              </div>
+            </fieldset>
+
+            <fieldset class="profile-fieldset">
+              <legend>Profile picture</legend>
+
+              <div class="photo-controls">
+                <label class="upload-button" for="profile-photo-input">Upload a picture</label>
+                <input id="profile-photo-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+
+                <button class="button button-secondary compact-button" id="remove-profile-photo" type="button">
+                  Remove picture
+                </button>
+              </div>
+
+              <p class="profile-help">
+                Images are resized before being stored locally in your browser.
+              </p>
+            </fieldset>
+          </div>
+
+          <div class="profile-editor-column">
+            <fieldset class="profile-fieldset theme-fieldset">
+              <legend>Choose a full app color theme</legend>
+
+              <p class="profile-help theme-help">
+                Each theme changes the background, buttons, borders, headings,
+                progress bars, accent colors, and strong text colors across the app.
+              </p>
+
+              <div class="theme-picker" id="profile-theme-picker">
+                <button type="button" data-profile-theme="duo" aria-label="Choose Lime Quest theme">
+                  <span class="theme-swatch swatch-duo"></span><span>Lime Quest</span>
+                </button>
+                <button type="button" data-profile-theme="berry" aria-label="Choose Berry Blush theme">
+                  <span class="theme-swatch swatch-berry"></span><span>Berry Blush</span>
+                </button>
+                <button type="button" data-profile-theme="lavender" aria-label="Choose Lavender League theme">
+                  <span class="theme-swatch swatch-lavender"></span><span>Lavender League</span>
+                </button>
+                <button type="button" data-profile-theme="sunshine" aria-label="Choose Golden Streak theme">
+                  <span class="theme-swatch swatch-sunshine"></span><span>Golden Streak</span>
+                </button>
+                <button type="button" data-profile-theme="ocean" aria-label="Choose Ocean Lesson theme">
+                  <span class="theme-swatch swatch-ocean"></span><span>Ocean Lesson</span>
+                </button>
+                <button type="button" data-profile-theme="coral" aria-label="Choose Coral Combo theme">
+                  <span class="theme-swatch swatch-coral"></span><span>Coral Combo</span>
+                </button>
+                <button type="button" data-profile-theme="mint" aria-label="Choose Mint Garden theme">
+                  <span class="theme-swatch swatch-mint"></span><span>Mint Garden</span>
+                </button>
+                <button type="button" data-profile-theme="blueberry" aria-label="Choose Blueberry League theme">
+                  <span class="theme-swatch swatch-blueberry"></span><span>Blueberry League</span>
+                </button>
+                <button type="button" data-profile-theme="peach" aria-label="Choose Peach Practice theme">
+                  <span class="theme-swatch swatch-peach"></span><span>Peach Practice</span>
+                </button>
+                <button type="button" data-profile-theme="rose" aria-label="Choose Rose Champion theme">
+                  <span class="theme-swatch swatch-rose"></span><span>Rose Champion</span>
+                </button>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+
+        <div class="profile-form-actions">
+          <button class="button button-primary" type="submit">Save Profile</button>
+          <button class="button button-secondary" id="reset-profile" type="button">Reset Profile</button>
+        </div>
+      </form>
+    </section>
   </main>
 
   <dialog id="sources-dialog" class="sources-dialog">
