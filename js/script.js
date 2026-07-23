@@ -223,6 +223,147 @@ const categoryIcons = {
   "Road to Revolution": "📜"
 };
 
+
+const difficultyDefinitions = {
+  beginner: {
+    label: "Beginner",
+    icon: "🌱",
+    description: "More hints, three answer choices, four hearts, and a gentler timer.",
+    choices: 3,
+    battleQuestions: 8,
+    battleLives: 4,
+    matchCount: 4,
+    examQuestions: 15,
+    examSeconds: 2100,
+    pathQuestions: 4,
+    pathLives: 4,
+    xpReward: 18,
+    showHints: true
+  },
+  standard: {
+    label: "Standard",
+    icon: "🎯",
+    description: "Four choices. The exam simulator matches 25 questions in 30 minutes.",
+    choices: 4,
+    battleQuestions: 12,
+    battleLives: 3,
+    matchCount: 6,
+    examQuestions: 25,
+    examSeconds: 1800,
+    pathQuestions: 5,
+    pathLives: 3,
+    xpReward: 25,
+    showHints: false
+  },
+  hard: {
+    label: "Hard",
+    icon: "🔥",
+    description: "Five choices, fewer hearts, larger puzzles, and a faster exam timer.",
+    choices: 5,
+    battleQuestions: 15,
+    battleLives: 2,
+    matchCount: 8,
+    examQuestions: 25,
+    examSeconds: 1500,
+    pathQuestions: 6,
+    pathLives: 2,
+    xpReward: 35,
+    showHints: false
+  },
+  expert: {
+    label: "Expert",
+    icon: "👑",
+    description: "Six choices, one heart, ten-term puzzles, and thirty questions in twenty minutes.",
+    choices: 6,
+    battleQuestions: 18,
+    battleLives: 1,
+    matchCount: 10,
+    examQuestions: 30,
+    examSeconds: 1200,
+    pathQuestions: 7,
+    pathLives: 1,
+    xpReward: 50,
+    showHints: false
+  }
+};
+
+const pathUnits = [
+  {
+    id: "indigenous",
+    section: 1,
+    unit: 1,
+    category: "Indigenous Foundations",
+    title: "Indigenous Worlds Before Contact",
+    description: "Migration, adaptation, cities, Southwestern communities, and Comanchería."
+  },
+  {
+    id: "encounter",
+    section: 1,
+    unit: 2,
+    category: "Encounter & Empire",
+    title: "Encounter, Exchange, and Spanish Empire",
+    description: "Caribbean societies, conquest, exploration, missions, and the Columbian Exchange."
+  },
+  {
+    id: "labor",
+    section: 2,
+    unit: 1,
+    category: "Labor & Colonial Society",
+    title: "Labor Systems and Atlantic Lives",
+    description: "Indentured labor, plantation systems, slavery, and Olaudah Equiano."
+  },
+  {
+    id: "religion",
+    section: 2,
+    unit: 2,
+    category: "Religion & Ideas",
+    title: "Faith, Dissent, and Revival",
+    description: "Puritan conflict, missionary towns, Baptists, and the Great Awakening."
+  },
+  {
+    id: "resistance",
+    section: 3,
+    unit: 1,
+    category: "Conflict & Resistance",
+    title: "War, Rebellion, and Native Resistance",
+    description: "Colonial rebellions, Native coalitions, frontier warfare, and resistance."
+  },
+  {
+    id: "places",
+    section: 3,
+    unit: 2,
+    category: "Colonial Places & People",
+    title: "Colonial Places and Founders",
+    description: "New Amsterdam, Pennsylvania, William Penn, trade, and toleration."
+  },
+  {
+    id: "revolution",
+    section: 4,
+    unit: 1,
+    category: "Road to Revolution",
+    title: "The Road to Revolution",
+    description: "Imperial war, the Proclamation line, Boston protest, and revolutionary tension."
+  }
+];
+
+const pathNodeTemplates = [
+  { kind: "learn", icon: "📖", title: "Discover the terms", questionOffset: -1 },
+  { kind: "recall", icon: "⚡", title: "Rapid recall", questionOffset: 0 },
+  { kind: "challenge", icon: "🧩", title: "Meaning challenge", questionOffset: 1 },
+  { kind: "checkpoint", icon: "🏆", title: "Unit checkpoint", questionOffset: 2 }
+];
+
+const pathNodes = pathUnits.flatMap((unit) =>
+  pathNodeTemplates.map((template, nodeIndex) => ({
+    ...template,
+    id: `${unit.id}-${template.kind}`,
+    unitId: unit.id,
+    unitIndex: pathUnits.indexOf(unit),
+    nodeIndex,
+    category: unit.category
+  }))
+);
+
 const views = document.querySelectorAll(".view");
 const navButtons = document.querySelectorAll("[data-view-link]");
 const mainNav = document.querySelector("#main-nav");
@@ -245,7 +386,8 @@ const defaultProfile = {
   icon: "🍓",
   bio: "Ready to master every HIST 1301 key term.",
   photo: "",
-  theme: "duo"
+  theme: "duo",
+  difficulty: "standard"
 };
 
 const defaultStudyStats = {
@@ -254,7 +396,12 @@ const defaultStudyStats = {
   battlesWon: 0,
   puzzlesCompleted: 0,
   examsCompleted: 0,
-  activityDays: []
+  activityDays: [],
+  pathLessonsCompleted: [],
+  pathXp: 0,
+  bestExamPercent: 0,
+  bestExamCorrect: 0,
+  bestExamTotal: 25
 };
 
 const badgeDefinitions = [
@@ -298,13 +445,25 @@ const badgeDefinitions = [
     id: "exam-ace",
     icon: "🏆",
     name: "Exam Ace",
-    task: "Score at least 20 out of 25 on a practice exam."
+    task: "Score at least 80% on a practice exam."
   },
   {
     id: "master-historian",
     icon: "👑",
     name: "Master Historian",
     task: "Master all 30 key terms."
+  },
+  {
+    id: "first-path-step",
+    icon: "👣",
+    name: "First Path Step",
+    task: "Complete your first learning-path lesson."
+  },
+  {
+    id: "path-champion",
+    icon: "🛤️",
+    name: "Path Champion",
+    task: "Complete all 28 learning-path lessons."
   }
 ];
 
@@ -338,6 +497,21 @@ studyStats.flippedTerms = Array.isArray(studyStats.flippedTerms)
 studyStats.activityDays = Array.isArray(studyStats.activityDays)
   ? [...new Set(studyStats.activityDays)]
   : [];
+
+studyStats.pathLessonsCompleted = Array.isArray(studyStats.pathLessonsCompleted)
+  ? [...new Set(studyStats.pathLessonsCompleted)]
+  : [];
+
+studyStats.pathXp = Number(studyStats.pathXp) || 0;
+studyStats.bestExamPercent = Number(studyStats.bestExamPercent) || 0;
+studyStats.bestExamCorrect = Number(studyStats.bestExamCorrect) || 0;
+studyStats.bestExamTotal = Number(studyStats.bestExamTotal) || 25;
+
+if (bestScore > 0 && studyStats.bestExamPercent === 0) {
+  studyStats.bestExamCorrect = bestScore;
+  studyStats.bestExamTotal = 25;
+  studyStats.bestExamPercent = Math.round((bestScore / 25) * 100);
+}
 
 let earnedBadges = readLocalJson("berryHistoryBadges", {});
 
@@ -408,8 +582,8 @@ function updateDashboard() {
   }
 
   bestExamScore.textContent =
-    bestScore > 0
-      ? `${bestScore} / 25 (${Math.round((bestScore / 25) * 100)}%)`
+    studyStats.bestExamPercent > 0
+      ? `${studyStats.bestExamCorrect} / ${studyStats.bestExamTotal} (${studyStats.bestExamPercent}%)`
       : "No attempt yet";
 }
 
@@ -421,7 +595,7 @@ function showView(name) {
   });
 
   document
-    .querySelectorAll(".main-nav button")
+    .querySelectorAll(".main-nav button, .mobile-bottom-nav button")
     .forEach((button) => {
       button.classList.toggle(
         "active",
@@ -433,6 +607,7 @@ function showView(name) {
   menuButton.setAttribute("aria-expanded", "false");
   window.scrollTo({ top: 0, behavior: "smooth" });
 
+  if (name === "home") renderLearningPath();
   if (name === "study") renderStudyDeck();
   if (name === "match" && !matchTerms.length) startMatchPuzzle();
   if (name === "profile") renderProfilePage();
@@ -449,11 +624,36 @@ menuButton.addEventListener("click", () => {
   menuButton.setAttribute("aria-expanded", String(open));
 });
 
-function pickDistractors(correctTerm, field, count = 3) {
+function getDifficultyConfig() {
+  const key = difficultyDefinitions[userProfile.difficulty]
+    ? userProfile.difficulty
+    : "standard";
+
+  if (userProfile.difficulty !== key) {
+    userProfile.difficulty = key;
+  }
+
+  return difficultyDefinitions[key];
+}
+
+function getDifficultyLabel() {
+  return getDifficultyConfig().label;
+}
+
+function pickDistractors(
+  correctTerm,
+  field,
+  count = 3,
+  pool = historyTerms
+) {
   const sameCategory = historyTerms.filter(
     (item) =>
       item.term !== correctTerm.term &&
       item.category === correctTerm.category
+  );
+
+  const poolTerms = pool.filter(
+    (item) => item.term !== correctTerm.term
   );
 
   const others = historyTerms.filter(
@@ -462,23 +662,44 @@ function pickDistractors(correctTerm, field, count = 3) {
 
   const candidates = unique([
     ...shuffle(sameCategory),
+    ...shuffle(poolTerms),
     ...shuffle(others)
   ].map((item) => item[field]));
 
   return candidates.slice(0, count);
 }
 
-function createQuestion(term, index = 0) {
-  const mode = index % 3;
+function createQuestion(
+  term,
+  index = 0,
+  options = {}
+) {
+  const difficulty = getDifficultyConfig();
+  const mode = options.mode ?? index % 3;
+  const optionCount =
+    Math.max(2, options.optionCount || difficulty.choices);
+  const pool = options.pool || historyTerms;
+  const showHint =
+    Boolean(options.forceHint) || difficulty.showHints;
+
+  const hintText = showHint
+    ? `\n\nHint: ${term.memory}`
+    : "";
 
   if (mode === 0) {
     return {
       type: "Definition → term",
-      prompt: `Which key term matches this description?\n\n${term.summary}`,
+      prompt:
+        `Which key term matches this description?\n\n${term.summary}${hintText}`,
       answer: term.term,
       options: shuffle([
         term.term,
-        ...pickDistractors(term, "term")
+        ...pickDistractors(
+          term,
+          "term",
+          optionCount - 1,
+          pool
+        )
       ]),
       term
     };
@@ -487,33 +708,66 @@ function createQuestion(term, index = 0) {
   if (mode === 1) {
     return {
       type: "Term → definition",
-      prompt: `Which description best explains “${term.term}”?`,
+      prompt:
+        `Which description best explains “${term.term}”?${hintText}`,
       answer: term.summary,
       options: shuffle([
         term.summary,
-        ...pickDistractors(term, "summary")
+        ...pickDistractors(
+          term,
+          "summary",
+          optionCount - 1,
+          pool
+        )
       ]),
       term
     };
   }
 
+  const advancedDatePrompt =
+    difficulty.showHints || options.forceHint
+      ? `Which term belongs with ${term.date} and this memory hook?\n\n${term.memory}`
+      : `Which term is most closely connected to this date or period?\n\n${term.date}`;
+
   return {
-    type: "Date + memory hook",
-    prompt:
-      `Which term belongs with ${term.date} and this memory hook?\n\n${term.memory}`,
+    type: difficulty.showHints
+      ? "Date + memory hook"
+      : "Date or period → term",
+    prompt: advancedDatePrompt,
     answer: term.term,
     options: shuffle([
       term.term,
-      ...pickDistractors(term, "term")
+      ...pickDistractors(
+        term,
+        "term",
+        optionCount - 1,
+        pool
+      )
     ]),
     term
   };
 }
 
-function buildQuestionSet(count) {
-  return shuffle(historyTerms)
+function buildQuestionSet(
+  count,
+  pool = historyTerms,
+  options = {}
+) {
+  const safePool = pool.length ? pool : historyTerms;
+  const selectedTerms = [];
+
+  while (selectedTerms.length < count) {
+    selectedTerms.push(...shuffle(safePool));
+  }
+
+  return selectedTerms
     .slice(0, count)
-    .map((term, index) => createQuestion(term, index));
+    .map((term, index) =>
+      createQuestion(term, index, {
+        ...options,
+        pool: safePool
+      })
+    );
 }
 
 function celebrate(amount = 28) {
@@ -531,6 +785,676 @@ function celebrate(amount = 28) {
     window.setTimeout(() => piece.remove(), 2700);
   }
 }
+
+
+/* ---------------- DIFFICULTY + LEARNING PATH ---------------- */
+
+const learningPath = document.querySelector("#learning-path");
+const difficultyDescription =
+  document.querySelector("#difficulty-description");
+const pathSectionLabel =
+  document.querySelector("#path-section-label");
+const pathUnitTitle =
+  document.querySelector("#path-unit-title");
+const pathUnitDescription =
+  document.querySelector("#path-unit-description");
+const pathUnitProgress =
+  document.querySelector("#path-unit-progress");
+const pathJumpButton =
+  document.querySelector("#path-jump-button");
+
+const pathStreakStat =
+  document.querySelector("#path-streak-stat");
+const pathXpStat =
+  document.querySelector("#path-xp-stat");
+const pathMasteredStat =
+  document.querySelector("#path-mastered-stat");
+const pathBadgeStat =
+  document.querySelector("#path-badge-stat");
+
+const pathLessonDialog =
+  document.querySelector("#path-lesson-dialog");
+const closePathLesson =
+  document.querySelector("#close-path-lesson");
+const pathLessonUnit =
+  document.querySelector("#path-lesson-unit");
+const pathLessonTitle =
+  document.querySelector("#path-lesson-title");
+const pathLessonDifficulty =
+  document.querySelector("#path-lesson-difficulty");
+const pathLessonGame =
+  document.querySelector("#path-lesson-game");
+const pathLessonResults =
+  document.querySelector("#path-lesson-results");
+const pathLessonHearts =
+  document.querySelector("#path-lesson-hearts");
+const pathLessonProgressCopy =
+  document.querySelector("#path-lesson-progress-copy");
+const pathLessonProgressFill =
+  document.querySelector("#path-lesson-progress-fill");
+const pathQuestionType =
+  document.querySelector("#path-question-type");
+const pathQuestion =
+  document.querySelector("#path-question");
+const pathOptions =
+  document.querySelector("#path-options");
+const pathFeedback =
+  document.querySelector("#path-feedback");
+const pathNextQuestion =
+  document.querySelector("#path-next-question");
+
+const battleModeDescription =
+  document.querySelector("#battle-mode-description");
+const battleWelcomeCopy =
+  document.querySelector("#battle-welcome-copy");
+const matchModeDescription =
+  document.querySelector("#match-mode-description");
+const examModeDescription =
+  document.querySelector("#exam-mode-description");
+const examFormatCopy =
+  document.querySelector("#exam-format-copy");
+const examRuleList =
+  document.querySelector("#exam-rule-list");
+
+let activePathNode = null;
+let pathLessonQuestions = [];
+let pathLessonIndex = 0;
+let pathLessonScore = 0;
+let pathLessonLives = 0;
+let pathLessonAnswered = false;
+
+function saveUserProfileSilently() {
+  try {
+    localStorage.setItem(
+      "berryHistoryProfile",
+      JSON.stringify(userProfile)
+    );
+  } catch (error) {
+    console.warn("Could not save difficulty.", error);
+  }
+}
+
+function setDifficulty(level) {
+  if (!difficultyDefinitions[level]) return;
+
+  userProfile.difficulty = level;
+  saveUserProfileSilently();
+  renderDifficultyControls();
+  updateDifficultyCopy();
+  renderLearningPath();
+  renderProfilePage();
+}
+
+function renderDifficultyControls() {
+  const config = getDifficultyConfig();
+
+  document
+    .querySelectorAll("[data-difficulty]")
+    .forEach((button) => {
+      const selected =
+        button.dataset.difficulty === userProfile.difficulty;
+
+      button.classList.toggle("selected", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+
+  if (difficultyDescription) {
+    difficultyDescription.textContent = config.description;
+  }
+}
+
+function formatDuration(seconds) {
+  const minutes = Math.round(seconds / 60);
+  return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+}
+
+function updateDifficultyCopy() {
+  const config = getDifficultyConfig();
+
+  if (battleModeDescription) {
+    battleModeDescription.textContent =
+      `${config.label}: ${config.battleQuestions} questions, ${config.battleLives} heart${config.battleLives === 1 ? "" : "s"}, and ${config.choices} answer choices.`;
+  }
+
+  if (battleWelcomeCopy) {
+    battleWelcomeCopy.textContent =
+      `Press “Start a new battle” to load ${config.battleQuestions} questions on ${config.label} difficulty.`;
+  }
+
+  if (matchModeDescription) {
+    matchModeDescription.textContent =
+      `${config.label}: match ${config.matchCount} terms to their definitions. Drag on desktop or tap on mobile.`;
+  }
+
+  if (examModeDescription) {
+    examModeDescription.textContent =
+      `${config.label}: ${config.examQuestions} multiple-choice questions in ${formatDuration(config.examSeconds)}.`;
+  }
+
+  if (examFormatCopy) {
+    examFormatCopy.textContent =
+      config.label === "Standard"
+        ? "Standard mirrors the professor's real pace: 25 questions in 30 minutes."
+        : `This ${config.label.toLowerCase()} practice uses ${config.examQuestions} questions in ${formatDuration(config.examSeconds)}. Switch to Standard for the real exam format.`;
+  }
+
+  if (examRuleList) {
+    examRuleList.innerHTML = `
+      <li>${config.examQuestions} randomized questions from all 30 terms</li>
+      <li>${config.choices} answer choices per question</li>
+      <li>${config.showHints ? "Memory hints appear in prompts" : "No memory hints during questions"}</li>
+      <li>A review screen appears after submission</li>
+    `;
+  }
+}
+
+function isPathNodeCompleted(nodeId) {
+  return studyStats.pathLessonsCompleted.includes(nodeId);
+}
+
+function getNextPathNodeIndex() {
+  const nextIndex = pathNodes.findIndex(
+    (node) => !isPathNodeCompleted(node.id)
+  );
+
+  return nextIndex === -1
+    ? pathNodes.length - 1
+    : nextIndex;
+}
+
+function isPathNodeUnlocked(index) {
+  return index === 0 ||
+    isPathNodeCompleted(pathNodes[index - 1].id);
+}
+
+function getUnitCompletion(unit) {
+  const nodes = pathNodes.filter(
+    (node) => node.unitId === unit.id
+  );
+
+  return nodes.filter(
+    (node) => isPathNodeCompleted(node.id)
+  ).length;
+}
+
+function renderLearningPath() {
+  if (!learningPath) return;
+
+  const currentIndex = getNextPathNodeIndex();
+  const currentNode = pathNodes[currentIndex];
+  const currentUnit =
+    pathUnits.find((unit) => unit.id === currentNode.unitId) ||
+    pathUnits[0];
+
+  pathSectionLabel.textContent =
+    `SECTION ${currentUnit.section}, UNIT ${currentUnit.unit}`;
+
+  pathUnitTitle.textContent = currentUnit.title;
+  pathUnitDescription.textContent = currentUnit.description;
+
+  const currentUnitDone = getUnitCompletion(currentUnit);
+  pathUnitProgress.textContent =
+    `${currentUnitDone} / 4 lessons`;
+
+  const streak = calculateStudyStreak();
+  const levelData = getLevelData();
+
+  pathStreakStat.textContent =
+    `${streak} day${streak === 1 ? "" : "s"}`;
+
+  pathXpStat.textContent = `${levelData.xp} XP`;
+  pathMasteredStat.textContent =
+    `${masteredTerms.size} / ${historyTerms.length}`;
+
+  pathBadgeStat.textContent =
+    String(Object.keys(earnedBadges).length);
+
+  learningPath.innerHTML = "";
+
+  pathUnits.forEach((unit, unitIndex) => {
+    const unitNodes = pathNodes.filter(
+      (node) => node.unitId === unit.id
+    );
+
+    const unitStartIndex =
+      pathNodes.findIndex(
+        (node) => node.unitId === unit.id
+      );
+
+    const unitDone = getUnitCompletion(unit);
+    const unitUnlocked =
+      unitStartIndex === 0 ||
+      isPathNodeUnlocked(unitStartIndex);
+
+    const unitSection = document.createElement("section");
+    unitSection.className = "path-unit";
+    unitSection.dataset.unitId = unit.id;
+
+    const header = document.createElement("header");
+    header.className = "path-unit-header";
+    header.classList.toggle(
+      "completed",
+      unitDone === unitNodes.length
+    );
+    header.classList.toggle(
+      "locked",
+      !unitUnlocked
+    );
+
+    header.innerHTML = `
+      <small>SECTION ${unit.section}, UNIT ${unit.unit}</small>
+      <h2>${unit.title}</h2>
+      <p>${unit.description}</p>
+    `;
+
+    const nodesContainer =
+      document.createElement("div");
+
+    nodesContainer.className = "path-nodes";
+
+    unitNodes.forEach((node, localIndex) => {
+      const globalIndex =
+        pathNodes.findIndex(
+          (candidate) => candidate.id === node.id
+        );
+
+      const completed =
+        isPathNodeCompleted(node.id);
+
+      const unlocked =
+        isPathNodeUnlocked(globalIndex);
+
+      const wrapper =
+        document.createElement("div");
+
+      wrapper.className =
+        `lesson-node-wrapper ${
+          localIndex % 2 === 0
+            ? "shift-left"
+            : "shift-right"
+        }`;
+
+      const button =
+        document.createElement("button");
+
+      button.type = "button";
+      button.className = "lesson-node";
+      button.dataset.pathNode = node.id;
+      button.disabled = !unlocked;
+
+      button.classList.toggle("completed", completed);
+      button.classList.toggle("locked", !unlocked);
+      button.classList.toggle(
+        "current",
+        globalIndex === currentIndex &&
+        !completed
+      );
+
+      const stars = completed
+        ? '<span class="lesson-node-stars" aria-label="Completed with three stars">★ ★ ★</span>'
+        : "";
+
+      const lock = unlocked
+        ? ""
+        : '<span class="lesson-node-lock" aria-hidden="true">🔒</span>';
+
+      button.innerHTML = `
+        <span class="lesson-node-icon" aria-hidden="true">${node.icon}</span>
+        ${lock}
+        ${stars}
+        <span class="lesson-node-label">${node.title}</span>
+      `;
+
+      button.setAttribute(
+        "aria-label",
+        `${node.title}. ${
+          completed
+            ? "Completed."
+            : unlocked
+              ? "Available."
+              : "Locked."
+        }`
+      );
+
+      if (unlocked) {
+        button.addEventListener("click", () => {
+          startPathLesson(node.id);
+        });
+      }
+
+      wrapper.appendChild(button);
+      nodesContainer.appendChild(wrapper);
+    });
+
+    if (unitIndex < pathUnits.length - 1) {
+      const guide = document.createElement("div");
+      guide.className = "unit-guide";
+      guide.classList.toggle(
+        "active",
+        unitDone === unitNodes.length
+      );
+
+      guide.innerHTML = `
+        <img src="images/BerryBelle.jpg" alt="">
+        <span>${unitDone === unitNodes.length ? "Unit cleared!" : "Keep going!"}</span>
+      `;
+
+      unitSection.append(header, nodesContainer, guide);
+    } else {
+      unitSection.append(header, nodesContainer);
+    }
+
+    learningPath.appendChild(unitSection);
+  });
+}
+
+function getPathQuestionCount(node) {
+  const config = getDifficultyConfig();
+
+  return Math.max(
+    3,
+    config.pathQuestions + node.questionOffset
+  );
+}
+
+function startPathLesson(nodeId) {
+  const node = pathNodes.find(
+    (candidate) => candidate.id === nodeId
+  );
+
+  if (!node) return;
+
+  const globalIndex =
+    pathNodes.findIndex(
+      (candidate) => candidate.id === nodeId
+    );
+
+  if (!isPathNodeUnlocked(globalIndex)) return;
+
+  const unit =
+    pathUnits.find(
+      (candidate) => candidate.id === node.unitId
+    );
+
+  const pool =
+    historyTerms.filter(
+      (term) => term.category === node.category
+    );
+
+  const questionCount =
+    getPathQuestionCount(node);
+
+  activePathNode = node;
+
+  pathLessonQuestions = buildQuestionSet(
+    questionCount,
+    pool,
+    {
+      forceHint: node.kind === "learn"
+    }
+  );
+
+  pathLessonIndex = 0;
+  pathLessonScore = 0;
+  pathLessonLives =
+    getDifficultyConfig().pathLives;
+
+  pathLessonAnswered = false;
+
+  pathLessonUnit.textContent =
+    `SECTION ${unit.section}, UNIT ${unit.unit}`;
+
+  pathLessonTitle.textContent =
+    node.title;
+
+  pathLessonDifficulty.textContent =
+    `${getDifficultyConfig().icon} ${getDifficultyLabel()} · ${questionCount} questions`;
+
+  pathLessonGame.hidden = false;
+  pathLessonResults.hidden = true;
+
+  renderPathLessonQuestion();
+
+  if (typeof pathLessonDialog.showModal === "function") {
+    pathLessonDialog.showModal();
+  } else {
+    pathLessonDialog.setAttribute("open", "");
+  }
+}
+
+function renderPathLessonQuestion() {
+  if (
+    pathLessonLives <= 0 ||
+    pathLessonIndex >= pathLessonQuestions.length
+  ) {
+    finishPathLesson();
+    return;
+  }
+
+  const difficulty = getDifficultyConfig();
+  const question =
+    pathLessonQuestions[pathLessonIndex];
+
+  pathLessonAnswered = false;
+  pathNextQuestion.hidden = true;
+  pathFeedback.textContent = "";
+  pathFeedback.className = "feedback";
+
+  pathLessonHearts.textContent =
+    Array.from(
+      { length: difficulty.pathLives },
+      (_, index) =>
+        index < pathLessonLives ? "❤️" : "🖤"
+    ).join(" ");
+
+  pathLessonProgressCopy.textContent =
+    `Question ${pathLessonIndex + 1} of ${pathLessonQuestions.length}`;
+
+  pathLessonProgressFill.style.width =
+    `${(pathLessonIndex / pathLessonQuestions.length) * 100}%`;
+
+  pathQuestionType.textContent =
+    question.type;
+
+  pathQuestion.textContent =
+    question.prompt;
+
+  pathOptions.innerHTML = "";
+
+  question.options.forEach((option) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "option-button";
+    button.textContent = option;
+
+    button.addEventListener("click", () => {
+      answerPathQuestion(button, option);
+    });
+
+    pathOptions.appendChild(button);
+  });
+}
+
+function answerPathQuestion(button, option) {
+  if (pathLessonAnswered) return;
+  pathLessonAnswered = true;
+
+  const question =
+    pathLessonQuestions[pathLessonIndex];
+
+  const correct =
+    option === question.answer;
+
+  pathOptions
+    .querySelectorAll(".option-button")
+    .forEach((optionButton) => {
+      optionButton.disabled = true;
+
+      if (
+        optionButton.textContent === question.answer
+      ) {
+        optionButton.classList.add("correct");
+      }
+    });
+
+  if (correct) {
+    pathLessonScore += 1;
+    button.classList.add("correct");
+    markMastered(question.term.term);
+
+    pathFeedback.textContent =
+      `Correct! ${question.term.term} added to your mastery progress.`;
+
+    pathFeedback.className =
+      "feedback correct";
+  } else {
+    pathLessonLives -= 1;
+    button.classList.add("wrong");
+
+    pathFeedback.textContent =
+      `Correct answer: ${question.answer}. Memory hook: ${question.term.memory}`;
+
+    pathFeedback.className =
+      "feedback wrong";
+  }
+
+  pathNextQuestion.hidden = false;
+}
+
+function finishPathLesson() {
+  pathLessonGame.hidden = true;
+  pathLessonResults.hidden = false;
+
+  const percent =
+    Math.round(
+      (
+        pathLessonScore /
+        pathLessonQuestions.length
+      ) * 100
+    );
+
+  const passed =
+    percent >= 70 &&
+    pathLessonLives > 0;
+
+  const alreadyCompleted =
+    isPathNodeCompleted(activePathNode.id);
+
+  if (passed && !alreadyCompleted) {
+    studyStats.pathLessonsCompleted.push(
+      activePathNode.id
+    );
+
+    studyStats.pathLessonsCompleted =
+      [...new Set(studyStats.pathLessonsCompleted)];
+
+    studyStats.pathXp +=
+      getDifficultyConfig().xpReward;
+
+    recordStudyActivity();
+    saveStudyStats();
+    awardBadge("first-path-step");
+
+    if (
+      studyStats.pathLessonsCompleted.length >=
+      pathNodes.length
+    ) {
+      awardBadge("path-champion");
+    }
+
+    celebrate(34);
+  }
+
+  renderLearningPath();
+  renderProfilePage();
+
+  pathLessonResults.innerHTML = `
+    <span class="results-score">${pathLessonScore} / ${pathLessonQuestions.length}</span>
+
+    <h2>${passed
+      ? alreadyCompleted
+        ? "Lesson practiced again!"
+        : "Lesson complete!"
+      : "Almost—try this node again."}</h2>
+
+    <p>
+      ${passed
+        ? `You earned ${
+            alreadyCompleted
+              ? "extra practice"
+              : `${getDifficultyConfig().xpReward} path XP`
+          } on ${getDifficultyLabel()} difficulty.`
+        : "You need at least 70% and one heart remaining to unlock the next node."}
+    </p>
+
+    <div class="path-results-actions">
+      <button class="button button-primary" id="path-retry-button" type="button">
+        ${passed ? "Practice again" : "Retry lesson"}
+      </button>
+
+      <button class="button button-secondary" id="path-return-button" type="button">
+        Return to path
+      </button>
+    </div>
+  `;
+
+  document
+    .querySelector("#path-retry-button")
+    .addEventListener("click", () => {
+      startPathLesson(activePathNode.id);
+    });
+
+  document
+    .querySelector("#path-return-button")
+    .addEventListener("click", () => {
+      pathLessonDialog.close();
+      renderLearningPath();
+    });
+}
+
+document
+  .querySelectorAll("[data-difficulty]")
+  .forEach((button) => {
+    button.addEventListener("click", () => {
+      setDifficulty(button.dataset.difficulty);
+    });
+  });
+
+pathJumpButton.addEventListener("click", () => {
+  const nextIndex = getNextPathNodeIndex();
+  const nextNode = pathNodes[nextIndex];
+
+  document
+    .querySelector(`[data-path-node="${nextNode.id}"]`)
+    ?.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+});
+
+pathNextQuestion.addEventListener("click", () => {
+  pathLessonIndex += 1;
+  renderPathLessonQuestion();
+});
+
+closePathLesson.addEventListener("click", () => {
+  pathLessonDialog.close();
+});
+
+pathLessonDialog.addEventListener("click", (event) => {
+  const bounds =
+    pathLessonDialog.getBoundingClientRect();
+
+  const outside =
+    event.clientX < bounds.left ||
+    event.clientX > bounds.right ||
+    event.clientY < bounds.top ||
+    event.clientY > bounds.bottom;
+
+  if (outside) pathLessonDialog.close();
+});
+
+
 
 /* ---------------- STUDY DECK ---------------- */
 
@@ -720,10 +1644,15 @@ let battleStreak = 0;
 let battleAnswered = false;
 
 function startBattle() {
-  battleQuestions = buildQuestionSet(12);
+  const difficulty = getDifficultyConfig();
+
+  battleQuestions = buildQuestionSet(
+    difficulty.battleQuestions
+  );
+
   battleIndex = 0;
   battleScore = 0;
-  battleLives = 3;
+  battleLives = difficulty.battleLives;
   battleStreak = 0;
   battleAnswered = false;
 
@@ -743,6 +1672,7 @@ function renderBattleQuestion() {
     return;
   }
 
+  const difficulty = getDifficultyConfig();
   const question = battleQuestions[battleIndex];
 
   battleAnswered = false;
@@ -751,15 +1681,23 @@ function renderBattleQuestion() {
   battleFeedback.className = "feedback";
 
   battleHearts.textContent =
-    Array.from({ length: 3 }, (_, index) =>
-      index < battleLives ? "❤️" : "🖤"
+    Array.from(
+      { length: difficulty.battleLives },
+      (_, index) =>
+        index < battleLives ? "❤️" : "🖤"
     ).join(" ");
 
   battleScoreText.textContent = String(battleScore);
   battleStreakText.textContent = String(battleStreak);
 
   enemyHealthFill.style.width =
-    `${Math.max(0, ((12 - battleScore) / 12) * 100)}%`;
+    `${Math.max(
+      0,
+      (
+        (battleQuestions.length - battleScore) /
+        battleQuestions.length
+      ) * 100
+    )}%`;
 
   battleProgressText.textContent =
     `Question ${battleIndex + 1} of ${battleQuestions.length}`;
@@ -767,7 +1705,9 @@ function renderBattleQuestion() {
   battleProgressFill.style.width =
     `${(battleIndex / battleQuestions.length) * 100}%`;
 
-  battleQuestionType.textContent = question.type;
+  battleQuestionType.textContent =
+    `${question.type} · ${difficulty.label}`;
+
   battleQuestion.textContent = question.prompt;
   battleOptions.innerHTML = "";
 
@@ -834,8 +1774,12 @@ function finishBattle() {
   battleGame.hidden = true;
   battleResults.hidden = false;
 
+  const difficulty = getDifficultyConfig();
+  const targetScore =
+    Math.ceil(battleQuestions.length * .67);
+
   const won =
-    battleScore >= 8 &&
+    battleScore >= targetScore &&
     battleLives > 0;
 
   studyStats.battlesCompleted += 1;
@@ -850,17 +1794,26 @@ function finishBattle() {
 
   saveStudyStats();
   renderProfilePage();
+  renderLearningPath();
+
+  const percent =
+    Math.round(
+      (battleScore / battleQuestions.length) * 100
+    );
 
   battleResults.innerHTML = `
-    <span class="results-score">${battleScore} / 12</span>
-    <h2>${won ? "The Forget-Me-Not Beast has been defeated!" : "The beast escaped this round."}</h2>
+    <span class="results-score">${battleScore} / ${battleQuestions.length}</span>
+    <h2>${won
+      ? "The Forget-Me-Not Beast has been defeated!"
+      : "The beast escaped this round."}</h2>
     <p>
-      ${battleScore >= 10
+      ${percent >= 90
         ? "Excellent recall. Your key-term armor is sparkling."
-        : battleScore >= 7
+        : percent >= 67
           ? "Solid progress. Review the missed memory hooks and battle again."
           : "Use the Study Deck, then return for a rematch."}
     </p>
+    <p><strong>Difficulty:</strong> ${difficulty.icon} ${difficulty.label}</p>
     <button class="button button-primary" id="battle-rematch" type="button">
       Battle again
     </button>
@@ -893,7 +1846,8 @@ let selectedMatchTile = null;
 let draggedMatchName = null;
 
 function startMatchPuzzle() {
-  matchTerms = shuffle(historyTerms).slice(0, 6);
+  const matchCount = getDifficultyConfig().matchCount;
+  matchTerms = shuffle(historyTerms).slice(0, matchCount);
   matchedNames = new Set();
   selectedMatchTile = null;
   draggedMatchName = null;
@@ -902,11 +1856,13 @@ function startMatchPuzzle() {
 }
 
 function renderMatchPuzzle() {
+  const matchTarget = matchTerms.length;
+
   matchScoreText.textContent =
-    `${matchedNames.size} of 6 matched`;
+    `${matchedNames.size} of ${matchTarget} matched`;
 
   matchMessage.textContent =
-    matchedNames.size === 6
+    matchedNames.size === matchTarget
       ? "Puzzle complete! Every term found its definition."
       : "Choose a term to begin.";
 
@@ -1024,7 +1980,7 @@ function tryMatch(termName, definitionElement) {
     matchMessage.textContent =
       `${termName} matched correctly!`;
 
-    if (matchedNames.size === 6) {
+    if (matchedNames.size === matchTerms.length) {
       studyStats.puzzlesCompleted += 1;
       recordStudyActivity();
       saveStudyStats();
@@ -1081,14 +2037,22 @@ let examTimeLeft = 1800;
 let examTimerId = null;
 let examSubmitted = false;
 
+let examQuestionCount = 25;
+
 function startExam() {
   window.clearInterval(examTimerId);
 
-  examQuestions = buildQuestionSet(25);
+  const difficulty = getDifficultyConfig();
+  examQuestionCount = difficulty.examQuestions;
+
+  examQuestions = buildQuestionSet(
+    examQuestionCount
+  );
+
   examIndex = 0;
   examAnswers = [];
   examSelected = null;
-  examTimeLeft = 1800;
+  examTimeLeft = difficulty.examSeconds;
   examSubmitted = false;
 
   examIntro.hidden = true;
@@ -1130,12 +2094,14 @@ function renderExamQuestion() {
     "Select one answer.";
 
   examQuestionNumber.textContent =
-    `Question ${examIndex + 1} of 25`;
+    `Question ${examIndex + 1} of ${examQuestionCount}`;
 
   examProgressFill.style.width =
-    `${(examIndex / 25) * 100}%`;
+    `${(examIndex / examQuestionCount) * 100}%`;
 
-  examQuestionType.textContent = question.type;
+  examQuestionType.textContent =
+    `${question.type} · ${getDifficultyLabel()}`;
+
   examQuestion.textContent = question.prompt;
   examOptions.innerHTML = "";
 
@@ -1166,7 +2132,7 @@ function renderExamQuestion() {
   });
 
   examNext.textContent =
-    examIndex === 24
+    examIndex === examQuestionCount - 1
       ? "Submit practice exam"
       : "Save answer and continue";
 }
@@ -1190,7 +2156,7 @@ function saveExamAnswer() {
 
   examIndex += 1;
 
-  if (examIndex >= 25) {
+  if (examIndex >= examQuestionCount) {
     finishExam(false);
   } else {
     renderExamQuestion();
@@ -1204,7 +2170,7 @@ function finishExam(timeExpired) {
   window.clearInterval(examTimerId);
   examTimerId = null;
 
-  while (examAnswers.length < 25) {
+  while (examAnswers.length < examQuestionCount) {
     const question = examQuestions[examAnswers.length];
 
     examAnswers.push({
@@ -1219,28 +2185,34 @@ function finishExam(timeExpired) {
   const score =
     examAnswers.filter((answer) => answer.correct).length;
 
+  const percent =
+    Math.round((score / examQuestionCount) * 100);
+
   studyStats.examsCompleted += 1;
   recordStudyActivity();
-  saveStudyStats();
   awardBadge("exam-finisher");
 
-  if (score >= 20) {
+  if (percent >= 80) {
     awardBadge("exam-ace");
   }
 
-  renderProfilePage();
-
-  if (score > bestScore) {
+  if (percent > studyStats.bestExamPercent) {
+    studyStats.bestExamPercent = percent;
+    studyStats.bestExamCorrect = score;
+    studyStats.bestExamTotal = examQuestionCount;
     bestScore = score;
     saveProgress();
-    updateDashboard();
-    renderProfilePage();
   }
+
+  saveStudyStats();
+  updateDashboard();
+  renderProfilePage();
+  renderLearningPath();
 
   examActive.hidden = true;
   examResults.hidden = false;
 
-  if (score >= 20) celebrate(42);
+  if (percent >= 80) celebrate(42);
 
   const reviewHtml =
     examAnswers.map((answer, index) => `
@@ -1255,18 +2227,19 @@ function finishExam(timeExpired) {
     `).join("");
 
   examResults.innerHTML = `
-    <span class="results-score">${score} / 25</span>
+    <span class="results-score">${score} / ${examQuestionCount}</span>
     <h2>
       ${timeExpired
         ? "Time expired—your practice exam was submitted."
         : "Practice exam complete!"}
     </h2>
+    <p><strong>${percent}% · ${getDifficultyConfig().icon} ${getDifficultyLabel()}</strong></p>
     <p>
-      ${score >= 23
+      ${percent >= 92
         ? "Excellent. You are recalling the terms with strong accuracy."
-        : score >= 20
+        : percent >= 80
           ? "Very good. Review the few misses and try once more."
-          : score >= 15
+          : percent >= 60
             ? "You have a foundation. Focus on the memory hooks below."
             : "Return to the Study Deck and Match Puzzle before another timed attempt."}
     </p>
@@ -1333,6 +2306,9 @@ const profileCardStat = document.querySelector("#profile-card-stat");
 const profileBadgeStat = document.querySelector("#profile-badge-stat");
 const profileBattleStat = document.querySelector("#profile-battle-stat");
 const profilePuzzleStat = document.querySelector("#profile-puzzle-stat");
+const profilePathStat = document.querySelector("#profile-path-stat");
+const profilePathQuickStat = document.querySelector("#profile-path-quick-stat");
+const profileDifficultyStat = document.querySelector("#profile-difficulty-stat");
 const profileMasteryPercent = document.querySelector("#profile-mastery-percent");
 const profileBadgePercent = document.querySelector("#profile-badge-percent");
 const profileMasteryFill = document.querySelector("#profile-mastery-fill");
@@ -1417,6 +2393,7 @@ function calculateXp() {
     studyStats.battlesWon * 35 +
     studyStats.puzzlesCompleted * 30 +
     studyStats.examsCompleted * 60 +
+    studyStats.pathXp +
     earnedAmount * 40
   );
 }
@@ -1449,8 +2426,10 @@ function getBadgeProgress(badgeId) {
     "beast-defeater": [studyStats.battlesWon, 1, "win"],
     "puzzle-solver": [studyStats.puzzlesCompleted, 1, "puzzle"],
     "exam-finisher": [studyStats.examsCompleted, 1, "exam"],
-    "exam-ace": [Math.min(bestScore, 20), 20, "points"],
-    "master-historian": [masteredTerms.size, 30, "terms"]
+    "exam-ace": [Math.min(studyStats.bestExamPercent, 80), 80, "%"],
+    "master-historian": [masteredTerms.size, 30, "terms"],
+    "first-path-step": [studyStats.pathLessonsCompleted.length, 1, "lesson"],
+    "path-champion": [studyStats.pathLessonsCompleted.length, pathNodes.length, "lessons"]
   };
 
   const [current, target, unit] = map[badgeId] || [0, 1, "task"];
@@ -1571,6 +2550,8 @@ function renderProfilePage() {
     button.classList.toggle("selected", button.dataset.profileTheme === userProfile.theme);
   });
 
+  renderDifficultyControls();
+
   removeProfilePhotoButton.disabled = !pendingProfilePhoto;
 
   const masteredAmount = masteredTerms.size;
@@ -1596,11 +2577,17 @@ function renderProfilePage() {
       : "Complete lessons and tasks to climb to the next level.";
 
   profileMasteredStat.textContent = `${masteredAmount} / ${historyTerms.length}`;
-  profileExamStat.textContent = bestScore > 0 ? `${bestScore} / 25` : "No attempt";
+  profileExamStat.textContent =
+    studyStats.bestExamPercent > 0
+      ? `${studyStats.bestExamCorrect} / ${studyStats.bestExamTotal} (${studyStats.bestExamPercent}%)`
+      : "No attempt";
   profileCardStat.textContent = `${flippedAmount} / ${historyTerms.length}`;
   profileBadgeStat.textContent = `${earnedAmount} / ${badgeDefinitions.length}`;
   profileBattleStat.textContent = String(studyStats.battlesCompleted);
   profilePuzzleStat.textContent = String(studyStats.puzzlesCompleted);
+  profilePathStat.textContent = `${studyStats.pathLessonsCompleted.length} / ${pathNodes.length}`;
+  profilePathQuickStat.textContent = `${studyStats.pathLessonsCompleted.length} / ${pathNodes.length}`;
+  profileDifficultyStat.textContent = `${getDifficultyConfig().icon} ${getDifficultyLabel()}`;
   profileMasteryPercent.textContent = `${masteryPercentage}%`;
   profileBadgePercent.textContent = `${badgePercentage}%`;
   profileMasteryFill.style.width = `${masteryPercentage}%`;
@@ -1743,6 +2730,10 @@ profileForm.addEventListener("submit", (event) => {
   userProfile.name = profileNameInput.value.trim() || defaultProfile.name;
   userProfile.bio = profileBioInput.value.trim() || defaultProfile.bio;
   userProfile.photo = pendingProfilePhoto;
+  userProfile.difficulty =
+    difficultyDefinitions[userProfile.difficulty]
+      ? userProfile.difficulty
+      : "standard";
   saveProfileState();
   renderProfilePage();
 });
@@ -1752,6 +2743,9 @@ resetProfileButton.addEventListener("click", () => {
   pendingProfilePhoto = "";
   saveProfileState();
   renderProfilePage();
+  renderDifficultyControls();
+  updateDifficultyCopy();
+  renderLearningPath();
   profileSaveState.textContent = "Profile reset to the Lime Quest defaults.";
   profileSaveState.className = "save-state saved";
 });
@@ -1788,6 +2782,9 @@ renderStudyFilters();
 renderStudyDeck();
 updateDashboard();
 reconcileCompletedTasks();
+renderDifficultyControls();
+updateDifficultyCopy();
+renderLearningPath();
 renderProfilePage();
 
 window.addEventListener("resize", scheduleStudyCardFit);
